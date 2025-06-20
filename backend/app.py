@@ -1,15 +1,23 @@
 from fastapi import FastAPI, Form, Request, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select, col, or_
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -19,17 +27,9 @@ engine = create_engine(sqlite_url, echo=True)
 
 class Item(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    name: str | None = Field(index=True, max_length=100)
+    name: str = Field(index=True, max_length=100)
     description: str | None = Field(default=None, max_length=500)
     price: float = Field(default=None, index=True)
-
-
-@app.get("/")
-async def index(request: Request):
-    return templates.TemplateResponse(
-        request=request, name="index.html", context={"message": "HELLOWORLD"}
-    )
-
 
 @app.get("/items/")
 async def get_items():

@@ -2,12 +2,12 @@ FROM node:18-slim
 
 WORKDIR /app
 
-# Install dependencies
 COPY package.json package-lock.json* ./
 RUN npm install
 
-# Copy frontend source code
 COPY . .
+
+ENV CHOKIDAR_USEPOLLING=true
 
 EXPOSE 5173
 

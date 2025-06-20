@@ -1,35 +1,79 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { createItem } from './script'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const FormField = ({ label, id, type, name, value, onChange, required = false }) => (
+    <div className="form-group">
+        <label htmlFor={id}>{label}</label>
+        <input
+            id={id}
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            required={required}
+        />
+    </div>
+);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function App() {
+    const [formData, setFormData] = useState({ name: '', price: '', description: '' });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const dataToSubmit = {
+            ...formData,
+            price: formData.price ? parseFloat(formData.price) : 0,
+        };
+        createItem(dataToSubmit)
+            .then((result) => {
+                console.log('Item created successfully:', result);
+                setFormData({ name: '', price: '', description: '' });
+            })
+            .catch((error) => {
+                console.error('Error creating item:', error);
+            });
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="product-form">
+            <FormField
+                label="Name:"
+                id="name"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+            />
+            <FormField
+                label="Price:"
+                id="price"
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+            />
+            <FormField
+                label="Description (optional):"
+                id="description"
+                type="text"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+            />
+            <button type="submit">Submit</button>
+        </form>
+    );
 }
 
 export default App
