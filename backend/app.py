@@ -1,6 +1,15 @@
 from fastapi import FastAPI, Form, Request, HTTPException
 from pydantic import BaseModel
-from sqlmodel import Field, Session, SQLModel, create_engine, select, col, or_
+from sqlmodel import (
+    Field,
+    Session,
+    SQLModel,
+    create_engine,
+    select,
+    col,
+    or_,
+    Relationship,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
@@ -30,23 +39,40 @@ class Item(SQLModel, table=True):
     name: str = Field(index=True, max_length=100)
     description: str | None = Field(default=None, max_length=500)
     price: float = Field(default=None, index=True)
+    order_items: list["OrderItem"] = Relationship(back_populates="item")
 
 
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     username: str = Field(index=True, max_length=20)
+    orders: list["Order"] = Relationship(back_populates="user")
 
 
 class Order(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     date: str = Field(default=None, index=True)
-    user_id: int = Field(foreign_key="user.id")
+    user_id: int = Field(foreign_key="user.id", index=True)
+    user: User = Relationship(back_populates="orders")
+    order_items: list["OrderItem"] = Relationship(back_populates="order")
 
 
 class OrderItem(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    order_id: int = Field(foreign_key="order.id")
-    item_id: int = Field(foreign_key="item.id")
+    order_id: int = Field(foreign_key="order.id", index=True)
+    order: Order = Relationship(back_populates="order_items")
+    item_id: int = Field(foreign_key="item.id", index=True)
+    item: Item = Relationship(back_populates="order_items")
+    quantity: int = Field(default=1)
+
+
+class OrderItemCreate(BaseModel):
+    item_id: int
+    quantity: int = 1
+
+
+class OrderCreate(BaseModel):
+    user_id: int
+    items: list[OrderItemCreate]
 
 
 @app.get("/items/")
@@ -138,21 +164,68 @@ async def get_orders():
 
 
 @app.post("/orders/")
-async def create_order(user_id: int = Form(...), item_ids: list[int] = Form(...)):
+async def create_order(order: OrderCreate):
     with Session(engine) as session:
-        user = session.get(User, user_id)
+        user = session.get(User, order.user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        order = Order(user_id=user_id, date=datetime.now().isoformat())
+        new_order = Order(user_id=order.user_id, date=datetime.now().isoformat())
+        session.add(new_order)
+        session.commit()
+        session.refresh(new_order)
 
-        session.add(order)
+        for item in order.items:
+            session.add(
+                OrderItem(
+                    order_id=new_order.id, item_id=item.item_id, quantity=item.quantity
+                )
+            )
         session.commit()
-        session.refresh(order)
-        for item_id in item_ids:
-            session.add(OrderItem(order_id=order.id, item_id=item_id))
+        return {"order": new_order}
+
+
+@app.put("/orders/{order_id}")
+async def update_order(order_id: int, order: OrderCreate):
+    with Session(engine) as session:
+        existing_order = session.get(Order, order_id)
+        if not existing_order:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        user = session.get(User, order.user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        existing_order.user_id = order.user_id
         session.commit()
-        return {"order": order}
+        session.refresh(existing_order)
+
+        session.exec(select(OrderItem).where(OrderItem.order_id == order_id)).delete()
+
+        for item in order.items:
+            session.add(
+                OrderItem(
+                    order_id=existing_order.id,
+                    item_id=item.item_id,
+                    quantity=item.quantity,
+                )
+            )
+        session.commit()
+
+        return {"order": existing_order}
+
+
+@app.delete("/orders/{order_id}")
+async def delete_order(order_id: int):
+    with Session(engine) as session:
+        order = session.get(Order, order_id)
+        if not order:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        session.exec(select(OrderItem).where(OrderItem.order_id == order_id)).delete()
+        session.delete(order)
+        session.commit()
+    return {"message": f"Order {order_id} deleted successfully"}
 
 
 def create_db_and_tables():
