@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import Home from './pages/Home';
 import Items from './pages/Items';
-import './App.css';
-// import Users from './pages/Users';
+import Users from './pages/Users';
 // import Orders from './pages/Orders';
 //import NotFound from './pages/NotFound';
+
+import './App.css';
 
 function App() {
     return (
@@ -20,8 +21,8 @@ function App() {
             <Routes>
                 {/* <Route path="/" element={<Home />} /> */}
                 <Route path="/items" element={<Items />} />
-                {/* <Route path="/users" element={<Users />} />
-                <Route path="/orders" element={<Orders />} /> */}
+                <Route path="/users" element={<Users />} />
+                {/* <Route path="/orders" element={<Orders />} /> */}
                 {/* <Route path="*" element={<NotFound />} /> */}
             </Routes>
 

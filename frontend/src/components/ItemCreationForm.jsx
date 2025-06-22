@@ -7,7 +7,7 @@ export default function ItemCreationForm() {
     const { formData, handleChange, handleSubmit } = useCreationForm(initialState, createItem);
 
     return (
-        <form onSubmit={handleSubmit} className="product-form">
+        <form className="product-form" onSubmit={handleSubmit}>
             <FormField
                 label="Name:"
                 id="name"

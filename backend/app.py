@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Request, HTTPException
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sqlmodel import (
     Field,
@@ -12,8 +12,15 @@ from sqlmodel import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+    # cleanup here if needed
+
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:5173",
@@ -32,7 +39,6 @@ sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 engine = create_engine(sqlite_url, echo=True)
-
 
 class Item(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -102,7 +108,7 @@ async def delete_item(item_id: int):
 
 
 @app.put("/items/{item_id}")
-async def update_item(item_id: int, item: Item, query: str | None = None):
+async def update_item(item_id: int, item: Item):
     with Session(engine) as session:
         existing_item = session.get(Item, item_id)
         if not existing_item:
@@ -246,11 +252,3 @@ def get_items_above_price(price: float):
         )
         items_above_price = session.exec(statement).all()
         return items_above_price
-
-
-def main():
-    create_db_and_tables()
-
-
-if __name__ == "__main__":
-    main()
