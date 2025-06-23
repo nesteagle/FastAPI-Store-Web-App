@@ -10,7 +10,6 @@ function App() {
         <BrowserRouter>
             <div style={{ padding: '2rem' }}>
                 <nav style={{ marginBottom: '1rem' }}>
-                    <a href="/" style={{ marginRight: '1rem' }}>Home</a>
                     <a href="/items" style={{ marginRight: '1rem' }}>Items</a>
                     <a href="/users" style={{ marginRight: '1rem' }}>Users</a>
                     <a href="/orders" style={{ marginRight: '1rem' }}>Orders</a>
