@@ -7,6 +7,12 @@ const columns = [
     { key: 'id', label: 'ID' },
     { key: 'user_id', label: 'User ID' },
     { key: 'date', label: 'Date' },
+      {
+    key: "items",
+    label: "Items",
+    render: (items) =>
+      items.map(i => `\"${i.name}\" x${i.quantity}`).join(", ")
+  }
 ];
 
 export default function Orders() {

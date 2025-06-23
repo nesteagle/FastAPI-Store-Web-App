@@ -1,11 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-// import Home from './pages/Home';
 import Items from './pages/Items';
 import Users from './pages/Users';
 import Orders from './pages/Orders';
-//import NotFound from './pages/NotFound';
 
-import './styles/App.css'; // Assuming you have some global styles
+import './styles/App.css';
 
 function App() {
     return (
@@ -19,11 +17,9 @@ function App() {
                 </nav>
             </div>
             <Routes>
-                {/* <Route path="/" element={<Home />} /> */}
                 <Route path="/items" element={<Items />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/orders" element={<Orders />} />
-                {/* <Route path="*" element={<NotFound />} /> */}
             </Routes>
 
         </BrowserRouter>

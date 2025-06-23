@@ -166,7 +166,28 @@ async def delete_user(user_id: int):
 async def get_orders():
     with Session(engine) as session:
         orders = session.exec(select(Order)).all()
-        return {"orders": orders}
+        result = []
+        for order in orders:
+            order_items = session.exec(
+                select(OrderItem).where(OrderItem.order_id == order.id)
+            ).all()
+            items = []
+            for oi in order_items:
+                item = session.get(Item, oi.item_id)
+                items.append({
+                    "item_id": oi.item_id,
+                    "name": item.name if item else None,
+                    "description": item.description if item else None,
+                    "price": item.price if item else None,
+                    "quantity": oi.quantity,
+                })
+            result.append({
+                "id": order.id,
+                "date": order.date,
+                "user_id": order.user_id,
+                "items": items,
+            })
+        return {"orders": result}
 
 
 @app.post("/orders/")

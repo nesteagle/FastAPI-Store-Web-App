@@ -14,11 +14,13 @@ export default function ObjectViewTable({ data, columns }) {
             </thead>
             <tbody>
                 {data.map(obj => (
-                    // possibly later create a component for each row
-                    // to handle complex objects or nested structures
                     <tr key={obj.id || JSON.stringify(obj)}>
                         {columns.map(col => (
-                            <td key={col.key}>{obj[col.key]}</td>
+                            <td key={col.key}>
+                                {col.render
+                                    ? col.render(obj[col.key], obj)
+                                    : obj[col.key]}
+                            </td>
                         ))}
                     </tr>
                 ))}
