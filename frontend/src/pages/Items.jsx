@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { getItems } from "../api/items";
 import ObjectTable from "../components/ObjectViewTable";
 import ItemCreationForm from "../components/ItemCreationForm";
+import useFetchList from "../hooks/useFetchList";
 
 const columns = [
     { key: "id", label: "ID" },
@@ -11,11 +11,7 @@ const columns = [
 ];
 
 export default function Items() {
-    const [items, setItems] = useState([]);
-
-    useEffect(() => {
-        getItems().then(res => setItems(res.items || []));
-    }, []);
+    const items = useFetchList(getItems, "items");
 
     return (
         <div>

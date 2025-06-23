@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import Home from './pages/Home';
 import Items from './pages/Items';
 import Users from './pages/Users';
-// import Orders from './pages/Orders';
+import Orders from './pages/Orders';
 //import NotFound from './pages/NotFound';
 
-import './App.css';
+import './styles/App.css'; // Assuming you have some global styles
 
 function App() {
     return (
@@ -22,7 +22,7 @@ function App() {
                 {/* <Route path="/" element={<Home />} /> */}
                 <Route path="/items" element={<Items />} />
                 <Route path="/users" element={<Users />} />
-                {/* <Route path="/orders" element={<Orders />} /> */}
+                <Route path="/orders" element={<Orders />} />
                 {/* <Route path="*" element={<NotFound />} /> */}
             </Routes>
 

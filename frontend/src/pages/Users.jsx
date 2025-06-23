@@ -1,9 +1,7 @@
-// view all users here and manage user CRUD operations
-
-import { useEffect, useState } from 'react';
 import { getUsers } from '../api/users';
 import ObjectTable from '../components/ObjectViewTable';
 import UserCreationForm from '../components/UserCreationForm';
+import useFetchList from '../hooks/useFetchList';
 
 const columns = [
     { key: 'id', label: 'ID' },
@@ -11,11 +9,7 @@ const columns = [
 ];
 
 export default function Users() {
-    const [users, setUsers] = useState([]);
-
-    useEffect(() => {
-        getUsers().then(res => setUsers(res.users || []));
-    }, []);
+    const users = useFetchList(getUsers, 'users');
 
     return (
         <div>

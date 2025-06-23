@@ -1,1 +1,22 @@
-// view all orders, details and their items here and manage order CRUD operations
+import OrderCreationForm from "../components/OrderCreationForm";
+import ObjectViewTable from "../components/ObjectViewTable";
+import { getOrders } from "../api/orders";
+import useFetchList from "../hooks/useFetchList";
+
+const columns = [
+    { key: 'id', label: 'ID' },
+    { key: 'user_id', label: 'User ID' },
+    { key: 'date', label: 'Date' },
+];
+
+export default function Orders() {
+    const orders = useFetchList(getOrders, "orders");
+    return (
+        <div>
+            <h2>Orders</h2>
+            <ObjectViewTable data={orders} columns={columns} />
+            <h3>Create new Order</h3>
+            <OrderCreationForm />
+        </div>
+    );
+}
