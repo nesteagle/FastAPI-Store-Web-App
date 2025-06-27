@@ -2,13 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install Python dependencies
-COPY requirements.txt .
+COPY ../requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source code
-COPY . .
+COPY . /app/backend
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--reload"]
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--reload"]

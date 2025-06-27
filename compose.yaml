@@ -5,11 +5,12 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend
+      - fastapi_db:/app/backend/db:/app/backend/db/database.db
     environment:
       - PYTHONUNBUFFERED=1
     working_dir: /app
-    command: uvicorn app:app --host 0.0.0.0 --reload
+    command: uvicorn backend.app:app --host 0.0.0.0 --reload
 
   frontend:
     build: ./frontend
@@ -25,3 +26,4 @@ services:
 
 volumes:
   frontend_node_modules:
+  fastapi_db:
