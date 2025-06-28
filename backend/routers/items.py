@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 from ..models import Item
 from ..database import get_db
+from .utils import try_get_item
 
 router = APIRouter(prefix="/items", tags=["items"])
 
@@ -10,6 +11,12 @@ router = APIRouter(prefix="/items", tags=["items"])
 async def get_items(db: Session = Depends(get_db)):
     items = db.exec(select(Item)).all()
     return {"items": items}
+
+
+@router.get("/{item_id}")
+async def get_item(item_id: int, db: Session = Depends(get_db)):
+    item = try_get_item(item_id, db)
+    return {"item": item}
 
 
 @router.post("/")
@@ -22,9 +29,7 @@ async def create_item(item: Item, db: Session = Depends(get_db)):
 
 @router.delete("/{item_id}")
 async def delete_item(item_id: int, db: Session = Depends(get_db)):
-    item = db.get(Item, item_id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
+    item = try_get_item(item_id, db)
     db.delete(item)
     db.commit()
     return {"message": f"Item {item_id} deleted successfully"}
@@ -32,9 +37,7 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
 
 @router.put("/{item_id}")
 async def update_item(item_id: int, item: Item, db: Session = Depends(get_db)):
-    existing_item = db.get(Item, item_id)
-    if not existing_item:
-        raise HTTPException(status_code=404, detail="Item not found")
+    existing_item = try_get_item(item_id, db)
     existing_item.name = item.name
     existing_item.description = item.description
     existing_item.price = item.price

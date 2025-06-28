@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
-from ..models import Order, OrderCreate, OrderItem, Item, User
+from ..models import Order, OrderCreate, OrderItem, Item
 from ..database import get_db
 from datetime import datetime
+from .utils import try_get_user, try_get_order
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -38,11 +39,15 @@ async def get_orders(db: Session = Depends(get_db)):
     return {"orders": result}
 
 
+@router.get("/orders/{order_id}")
+def get_order(order_id: int, db: Session = Depends(get_db)):
+    order = try_get_order(order_id, db)
+    return {"order": order}
+
+
 @router.post("/")
 async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
-    user = db.get(User, order.user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    try_get_user(order.user_id, db)  # make sure user exists
 
     new_order = Order(user_id=order.user_id, date=datetime.now().isoformat())
     db.add(new_order)
@@ -63,13 +68,9 @@ async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
 async def update_order(
     order_id: int, order: OrderCreate, db: Session = Depends(get_db)
 ):
-    existing_order = db.get(Order, order_id)
-    if not existing_order:
-        raise HTTPException(status_code=404, detail="Order not found")
+    existing_order = try_get_order(order_id, db)
 
-    user = db.get(User, order.user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    try_get_user(order.user_id, db)  # make sure user exists
 
     existing_order.user_id = order.user_id
     db.commit()
@@ -92,9 +93,7 @@ async def update_order(
 
 @router.delete("/{order_id}")
 async def delete_order(order_id: int, db: Session = Depends(get_db)):
-    order = db.get(Order, order_id)
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
+    order = try_get_order(order_id, db)
 
     db.exec(select(OrderItem).where(OrderItem.order_id == order_id)).delete()
     db.delete(order)

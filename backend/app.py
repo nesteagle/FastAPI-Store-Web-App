@@ -4,6 +4,7 @@ from .database import create_db_and_tables
 from contextlib import asynccontextmanager
 from .routers import items, users, orders, admin
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()

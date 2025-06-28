@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Relationship
 
+
 class Item(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, max_length=100)
@@ -40,4 +41,3 @@ class OrderItemCreate(BaseModel):
 class OrderCreate(BaseModel):
     user_id: int
     items: list[OrderItemCreate]
-

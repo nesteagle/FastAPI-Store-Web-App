@@ -5,19 +5,23 @@ from backend.models import Item, User, Order, OrderItem
 from backend.routers import items, users, orders
 from backend.database import get_db
 
+
 def get_test_engine():
     return create_engine(
         "sqlite:///:memory:",
         echo=False,
         connect_args={"check_same_thread": False},
-        poolclass=StaticPool
+        poolclass=StaticPool,
     )
+
 
 def get_test_db(test_engine):
     def _get_db():
         with Session(test_engine) as session:
             yield session
+
     return _get_db
+
 
 def get_test_app():
     test_engine = get_test_engine()
