@@ -36,3 +36,31 @@ def get_test_app():
     app.include_router(orders.router)
 
     return app
+
+def create_test_user(client, username= "William"):
+    response = client.post("/users/", json = {"username": username})
+    assert response.status_code == 200
+    return response.json()["user"]
+
+def create_test_item(client, name, price, description = None):
+    data = {"name": name, "description": description, "price": price}
+    response = client.post("/items/", json=data)
+    assert response.status_code == 200
+    return response.json()["item"]
+
+def create_test_order(client, user_id, *item_quantity_tuples):
+    data = build_order_data(user_id, *item_quantity_tuples)
+
+    response = client.post("/orders/", json=data)
+    assert response.status_code == 200
+    return response.json()["order"]
+
+
+def build_order_data(user_id: int, *item_quantity_tuples: tuple) -> dict:
+    return {
+        "user_id": user_id,
+        "items": [
+            {"item_id": item["id"], "quantity": quantity}
+            for item, quantity in item_quantity_tuples
+        ],
+    }

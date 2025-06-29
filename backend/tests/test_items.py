@@ -1,3 +1,6 @@
+from .helpers import create_test_item
+
+
 def test_get_items(client):
     response = client.get("/items/")
     assert response.status_code == 200
@@ -5,28 +8,25 @@ def test_get_items(client):
 
 
 def test_create_item(client):
-    data = {"name": "Apple", "description": "an apple", "price": 2.99}
-    response = client.post("/items/", json=data)
-    assert response.status_code == 200
-    resp_json = response.json()
-    assert "item" in resp_json
-    item = resp_json["item"]
-    assert item["name"] == data["name"]
-    assert item["description"] == data["description"]
-    assert item["price"] == data["price"]
+    name = "Apple"
+    description = "an apple"
+    price = 2.99
+    item = create_test_item(client, name=name, description=description, price=price)
+    assert item["name"] == name
+    assert item["description"] == description
+    assert item["price"] == price
     assert "id" in item
 
 
 def test_put_item(client):
-    data = {"name": "Organic Apple", "description": "an ORGANIC apple", "price": 4.99}
-    response = client.post("/items/", json=data)
-    item_id = response.json()["item"]["id"]
-    assert response.status_code == 200
-
+    item_id = create_test_item(client, name="Mouse", description="N/A", price=10.99)[
+        "id"
+    ]
     update_data = {"name": "Orange", "description": "an orange", "price": 1.99}
+
     update_response = client.put(
         f"/items/{item_id}",
-        json=update_data,
+        json=update_data
     )
     assert update_response.status_code == 200
     resp_json = update_response.json()
@@ -40,14 +40,9 @@ def test_put_item(client):
 
 
 def test_delete_item(client):
-    data = {
-        "name": "Inorganic Apple",
-        "description": "is it still an apple?",
-        "price": 0.99,
-    }
-    response = client.post("/items/", json=data)
-    assert response.status_code == 200
-    item_id = response.json()["item"]["id"]
+    item_id = create_test_item(
+        client, name="Inorganic Apple", description="is it still an apple?", price=0.99
+    )["id"]
 
     delete_response = client.delete(f"/items/{item_id}")
     assert delete_response.status_code == 200
