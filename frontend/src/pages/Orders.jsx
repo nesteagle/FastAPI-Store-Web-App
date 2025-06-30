@@ -1,4 +1,4 @@
-import OrderCreationForm from "../components/OrderCreationForm";
+import ShoppingCart from "../components/ShoppingCart";
 import ObjectViewTable from "../components/ObjectViewTable";
 import { getOrders } from "../api/orders";
 import useFetchList from "../hooks/useFetchList";
@@ -22,7 +22,7 @@ export default function Orders() {
             <h2>Orders</h2>
             <ObjectViewTable data={orders} columns={columns} />
             <h3>Create new Order</h3>
-            <OrderCreationForm />
+            <ShoppingCart />
         </div>
     );
 }
