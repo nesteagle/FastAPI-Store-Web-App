@@ -7,7 +7,7 @@ import useShoppingCart from "../hooks/useShoppingCart";
 import { getItems } from "../api/items";
 
 export default function ShoppingCart() {
-    const availableItems = useFetchList(getItems, "items");
+    const {data: availableItems} = useFetchList(getItems, "items");
 
     const initialState = { user_id: "" };
     const { formData, handleChange, handleSubmit: originalHandleSubmit } =

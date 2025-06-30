@@ -23,6 +23,7 @@ export default function ItemCreationForm() {
                 type="number"
                 name="price"
                 step="0.01"
+                min = "0.01"
                 value={formData.price}
                 onChange={handleChange}
             />
