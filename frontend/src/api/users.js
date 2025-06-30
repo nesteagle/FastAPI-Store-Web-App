@@ -1,11 +1,11 @@
 import { apiRequest } from "./baseApi";
 
 export async function getUsers() {
-    return apiRequest('/users');
+    return apiRequest('/users/');
 }
 
 export async function createUser(data) {
-    return apiRequest('/users', 'POST', data);
+    return apiRequest('/users/', 'POST', data);
 }
 
 export async function deleteUser(id) {

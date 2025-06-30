@@ -1,11 +1,11 @@
 import { apiRequest } from "./baseApi";
 
 export async function getItems() {
-    return apiRequest('/items');
+    return apiRequest('/items/');
 }
 
 export async function createItem(data) {
-    return apiRequest('/items', 'POST', data);
+    return apiRequest('/items/', 'POST', data);
 }
 
 export async function deleteItem(id) {

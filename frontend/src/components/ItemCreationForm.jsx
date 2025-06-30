@@ -3,7 +3,7 @@ import { createItem } from "../api/items";
 import useCreationForm from "../hooks/useCreationForm";
 
 export default function ItemCreationForm() {
-    const initialState = { name: "", price: "", description: "" };
+    const initialState = { name: "", price: "", description: "", image_src: ""};
     const { formData, handleChange, handleSubmit } = useCreationForm(initialState, createItem);
 
     return (
@@ -33,6 +33,15 @@ export default function ItemCreationForm() {
                 type="text"
                 name="description"
                 value={formData.description}
+                onChange={handleChange}
+            />
+            <FormField
+                label="Image Link (must start with https:// or http://):"
+                id="image_src"
+                type="text"
+                name="image_src"
+                required
+                value={formData.image_src}
                 onChange={handleChange}
             />
             <button type="submit">Create Item</button>

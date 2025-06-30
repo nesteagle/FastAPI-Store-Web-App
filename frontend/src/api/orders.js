@@ -1,11 +1,11 @@
 import { apiRequest } from "./baseApi";
 
 export async function getOrders() {
-    return apiRequest('/orders');
+    return apiRequest('/orders/');
 }
 
 export async function createOrder(data) {
-    return apiRequest('/orders', 'POST', data);
+    return apiRequest('/orders/', 'POST', data);
 }
 
 export async function deleteOrder(id) {

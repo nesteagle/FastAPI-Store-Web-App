@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Security
 from sqlmodel import Session, select
 from ..models import Item
 from ..database import get_db
 from .utils import try_get_item, encode_item_fields
+from ..auth import get_current_user
 
 router = APIRouter(prefix="/items", tags=["items"])
 
-
 @router.get("/")
-async def get_items(db: Session = Depends(get_db)):
+async def get_items(auth_result: str = Security(get_current_user(["get:items"])), db: Session = Depends(get_db)):
     items = db.exec(select(Item)).all()
     return {"items": items}
 
