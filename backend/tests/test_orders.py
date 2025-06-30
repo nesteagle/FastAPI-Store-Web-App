@@ -104,5 +104,5 @@ def test_delete_order(client):
 
     get_response = client.get(f"/orders/{order_id}")
     assert get_response.status_code == 404
-    assert get_response.json()["detail"] == "Order not found"
+    assert get_response.json()["detail"] == "Resource not found"
     

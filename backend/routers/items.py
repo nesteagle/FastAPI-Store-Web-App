@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 from ..models import Item
 from ..database import get_db
-from .utils import try_get_item
+from .utils import try_get_item, encode_item_fields
 
 router = APIRouter(prefix="/items", tags=["items"])
 
@@ -21,6 +21,7 @@ async def get_item(item_id: int, db: Session = Depends(get_db)):
 
 @router.post("/")
 async def create_item(item: Item, db: Session = Depends(get_db)):
+    item = encode_item_fields(item)
     db.add(item)
     db.commit()
     db.refresh(item)
@@ -41,6 +42,8 @@ async def update_item(item_id: int, item: Item, db: Session = Depends(get_db)):
     existing_item.name = item.name
     existing_item.description = item.description
     existing_item.price = item.price
+    existing_item.image_src = item.image_src
+    existing_item = encode_item_fields(item)
     db.commit()
     db.refresh(existing_item)
     return {"item": existing_item}

@@ -2,19 +2,30 @@ from sqlmodel import Session, select
 from fastapi import HTTPException
 from ..models import User, Item, Order, OrderItem
 from sqlalchemy.orm import selectinload
+import urllib.parse
+
+
+def encode_item_fields(item: Item) -> Item:
+    if item.image_src:
+        sanitized = item.image_src.strip()
+        if not sanitized.lower().startswith(('http://', 'https://')):
+            raise HTTPException(status_code=400, detail="Invalid input provided.")
+        sanitized = urllib.parse.quote(sanitized, safe=":/")
+        item.image_src = sanitized
+    return item
 
 
 def try_get_user(user_id: int, db: Session) -> User:
     user = db.get(User, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Resource not found")
     return user
 
 
 def try_get_item(item_id: int, db: Session) -> Item:
     item = db.get(Item, item_id)
     if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail="Resource not found")
     return item
 
 
@@ -26,7 +37,7 @@ def try_get_order(order_id: int, db: Session) -> Order:
     )
     order = db.exec(statement).first()
     if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
+        raise HTTPException(status_code=404, detail="Resource not found")
     return order
 
 
@@ -37,9 +48,10 @@ def get_order_details(order: Order, db: Session):
         items.append(
             {
                 "item_id": oi.item_id,
-                "name": oi.item.name if oi.item else None,
+                "name": oi.item.name,
                 "description": oi.item.description if oi.item else None,
-                "price": oi.item.price if oi.item else None,
+                "price": oi.item.price,
+                "image_src": oi.item.image_src if oi.item else None,
                 "quantity": oi.quantity,
             }
         )
@@ -53,7 +65,7 @@ def get_order_details(order: Order, db: Session):
 
 def add_order_items(db: Session, order_id: int, order_items: list) -> None:
     for item in order_items:
-        if (item.quantity <= 0):
+        if item.quantity <= 0:
             raise ValueError("Quantity must be a positive integer")
         db.add(
             OrderItem(order_id=order_id, item_id=item.item_id, quantity=item.quantity)

@@ -53,4 +53,4 @@ def test_delete_item(client):
 
     get_response = client.get(f"/items/{item_id}")
     assert get_response.status_code == 404  # make sure item is gone and not found
-    assert get_response.json()["detail"] == "Item not found"
+    assert get_response.json()["detail"] == "Resource not found"
