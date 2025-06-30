@@ -16,22 +16,6 @@ export default function UserCreationForm() {
                 required
                 onChange={handleChange}
             />
-            {/* <FormField
-                label="Email:"
-                id="email"
-                type="email"
-                name="email"
-                required
-                onChange={handleChange}
-            /> */}
-            {/* <FormField
-                label="Password:"
-                id="password"
-                type="password"
-                name="password"
-                required
-                onChange={handleChange}
-            /> */}
             <button type="submit">Create User</button>
         </form>
     );

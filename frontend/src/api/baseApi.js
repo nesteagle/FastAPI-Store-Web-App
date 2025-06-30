@@ -13,6 +13,8 @@ export async function apiRequest(endpoint, method = 'GET', data = null) {
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-
+    if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${await response.text()}`);
+    }
     return response.json();
 }
