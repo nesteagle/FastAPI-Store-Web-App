@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Security
+from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session, select
 from ..models import Item
 from ..database import get_db
@@ -9,10 +9,16 @@ router = APIRouter(prefix="/items", tags=["items"])
 
 
 @router.get("/")
-async def get_items(db: Session = Depends(get_db)):
-    items = db.exec(select(Item)).all()
+async def get_items(
+    search: str = Query("", description="Search items by name"),
+    db: Session = Depends(get_db)
+):
+    statement = select(Item)
+    if search:
+        # ilike for case insensitive matching
+        statement = statement.where(Item.name.ilike(f"%{search}%"))
+    items = db.exec(statement).all()
     return {"items": items}
-
 
 @router.get("/{item_id}")
 async def get_item(item_id: int, db: Session = Depends(get_db)):

@@ -2,8 +2,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useCallback } from "react";
 import { apiRequest } from "../api/baseApi";
 
-const AUDIENCE = import.meta.env.VITE_AUTH0_AUDIENCE;
-
 
 export function useApi() {
     const { getAccessTokenSilently, isAuthenticated } = useAuth0();

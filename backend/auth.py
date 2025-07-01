@@ -46,7 +46,6 @@ class VerifyToken:
     ):
         if token is None:
             raise UnauthenticatedException()
-
         try:
             signing_key = self.jwks_client.get_signing_key_from_jwt(
                 token.credentials

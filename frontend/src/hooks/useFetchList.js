@@ -1,20 +1,25 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useApi } from "./useApi";
 
 export default function useFetchList(fetchFunction, dataKey) {
-    const [data, setData] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const { callApi } = useApi();
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetchFunction()
-            .then((res) => {
-                setData(dataKey ? res[dataKey] || [] : res || []);
-                setLoading(false);
-            })
-            .catch((err) => {
-                setError(err);
-                setLoading(false);
-            });
-    }, [fetchFunction, dataKey]);
-    return { data, error, loading };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await callApi(fetchFunction.endpoint, fetchFunction.method, fetchFunction.data);
+        setData(response[dataKey]);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, [callApi, fetchFunction, dataKey]);
+
+  return { data, isLoading, error };
 }

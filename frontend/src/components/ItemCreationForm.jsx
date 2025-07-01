@@ -1,10 +1,16 @@
 import FormField from "./FormField";
-import { createItem } from "../api/items";
+import { useApi } from "../hooks/useApi";
 import useCreationForm from "../hooks/useCreationForm";
 
 export default function ItemCreationForm() {
-    const initialState = { name: "", price: "", description: "", image_src: ""};
-    const { formData, handleChange, handleSubmit } = useCreationForm(initialState, createItem);
+    const { callApi } = useApi();
+
+    const createItemUsingApi = async (data) => {
+        return await callApi('/items/', 'POST', data);
+    };
+
+    const initialState = { name: "", price: "", description: "", image_src: "" };
+    const { formData, handleChange, handleSubmit } = useCreationForm(initialState, createItemUsingApi);
 
     return (
         <form className="product-form" onSubmit={handleSubmit}>
@@ -23,7 +29,7 @@ export default function ItemCreationForm() {
                 type="number"
                 name="price"
                 step="0.01"
-                min = "0.01"
+                min="0.01"
                 value={formData.price}
                 onChange={handleChange}
             />
