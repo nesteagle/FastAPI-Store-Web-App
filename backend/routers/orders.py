@@ -5,12 +5,16 @@ from ..database import get_db
 from datetime import datetime
 from .utils import try_get_user, try_get_order, get_order_details, add_order_items
 from sqlalchemy.orm import selectinload
+from ..auth import require_permissions
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
 @router.get("/")
-async def get_orders(db: Session = Depends(get_db)):
+async def get_orders(
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["get:orders"]),
+):
     statement = select(Order).options(
         selectinload(Order.order_items).selectinload(OrderItem.item)
     )
@@ -20,14 +24,22 @@ async def get_orders(db: Session = Depends(get_db)):
 
 
 @router.get("/{order_id}")
-def get_order(order_id: int, db: Session = Depends(get_db)):
+def get_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["get:order"]),
+):
     order = try_get_order(order_id, db)
     order_details = get_order_details(order, db)
     return {"order": order_details}
 
 
 @router.post("/")
-async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
+async def create_order(
+    order: OrderCreate,
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["modify:orders"]),
+):
     try_get_user(order.user_id, db)  # make sure user exists
 
     new_order = Order(user_id=order.user_id, date=datetime.now().isoformat())
@@ -44,7 +56,10 @@ async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
 
 @router.put("/{order_id}")
 async def update_order(
-    order_id: int, order: OrderCreate, db: Session = Depends(get_db)
+    order_id: int,
+    order: OrderCreate,
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["modify:orders"]),
 ):
     existing_order = try_get_order(order_id, db)
 
@@ -65,7 +80,11 @@ async def update_order(
 
 
 @router.delete("/{order_id}")
-async def delete_order(order_id: int, db: Session = Depends(get_db)):
+async def delete_order(
+    order_id: int,
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["modify:orders"]),
+):
     order = try_get_order(order_id, db)
 
     db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))

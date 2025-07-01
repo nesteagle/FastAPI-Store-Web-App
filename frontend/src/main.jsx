@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')).render(
             authorizationParams={{
                 redirect_uri: window.location.origin,
                 audience: AUDIENCE,
-                scope: "openid profile email get:items"
+                scope: "openid profile email"
             }}
         >
             <App />

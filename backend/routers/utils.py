@@ -8,7 +8,7 @@ import urllib.parse
 def encode_item_fields(item: Item) -> Item:
     if item.image_src:
         sanitized = item.image_src.strip()
-        if not sanitized.lower().startswith(('http://', 'https://')):
+        if not sanitized.lower().startswith(("http://", "https://")):
             raise HTTPException(status_code=400, detail="Invalid input provided.")
         sanitized = urllib.parse.quote(sanitized, safe=":/")
         item.image_src = sanitized

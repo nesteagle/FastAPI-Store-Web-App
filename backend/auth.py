@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 from .database import engine
 from .models import User
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Security
 from fastapi.security import SecurityScopes, HTTPAuthorizationCredentials, HTTPBearer
 
 load_dotenv()
@@ -18,7 +18,7 @@ AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
 AUTH0_API_AUDIENCE = os.getenv("AUTH0_API_AUDIENCE")
 AUTH0_ISSUER = os.getenv("AUTH0_ISSUER")
-AUTH0_ALGORITHMS = os.getenv("AUTH0_ALGORITHMS", "RS256").split(",")
+AUTH0_ALGORITHM = os.getenv("AUTH0_ALGORITHM")
 
 
 class UnauthorizedException(HTTPException):
@@ -54,7 +54,7 @@ class VerifyToken:
             payload = jwt.decode(
                 token.credentials,
                 signing_key,
-                algorithms=AUTH0_ALGORITHMS,
+                algorithms=AUTH0_ALGORITHM,
                 audience=AUTH0_API_AUDIENCE,
                 issuer=AUTH0_ISSUER,
                 leeway=10,
@@ -66,7 +66,8 @@ class VerifyToken:
         ) as error:
             raise UnauthorizedException(str(error))
 
-        permissions = payload.get("scope", "").split()
+        permissions = payload.get("permissions")
+        print(permissions)
         for permission in self.required_permissions:
             if permission not in permissions:
                 raise UnauthorizedException("Missing permission")
@@ -109,6 +110,6 @@ def update_from_auth0():
         session.commit()
 
 
-def get_current_user(required_permissions: list = None):
+def require_permissions(required_permissions: list = None):
     verifier = VerifyToken(required_permissions or [])
-    return verifier.verify
+    return Security(verifier.verify)

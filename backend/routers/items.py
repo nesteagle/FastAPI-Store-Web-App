@@ -3,12 +3,13 @@ from sqlmodel import Session, select
 from ..models import Item
 from ..database import get_db
 from .utils import try_get_item, encode_item_fields
-from ..auth import get_current_user
+from ..auth import require_permissions
 
 router = APIRouter(prefix="/items", tags=["items"])
 
+
 @router.get("/")
-async def get_items(auth_result: str = Security(get_current_user(["get:items"])), db: Session = Depends(get_db)):
+async def get_items(db: Session = Depends(get_db)):
     items = db.exec(select(Item)).all()
     return {"items": items}
 
@@ -20,7 +21,11 @@ async def get_item(item_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/")
-async def create_item(item: Item, db: Session = Depends(get_db)):
+async def create_item(
+    item: Item,
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["modify:items"]),
+):
     item = encode_item_fields(item)
     db.add(item)
     db.commit()
@@ -29,7 +34,11 @@ async def create_item(item: Item, db: Session = Depends(get_db)):
 
 
 @router.delete("/{item_id}")
-async def delete_item(item_id: int, db: Session = Depends(get_db)):
+async def delete_item(
+    item_id: int,
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["modify:items"]),
+):
     item = try_get_item(item_id, db)
     db.delete(item)
     db.commit()
@@ -37,7 +46,12 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{item_id}")
-async def update_item(item_id: int, item: Item, db: Session = Depends(get_db)):
+async def update_item(
+    item_id: int,
+    item: Item,
+    db: Session = Depends(get_db),
+    auth_result: str = require_permissions(["modify:items"]),
+):
     existing_item = try_get_item(item_id, db)
     existing_item.name = item.name
     existing_item.description = item.description
