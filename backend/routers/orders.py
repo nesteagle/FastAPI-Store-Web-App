@@ -10,11 +10,8 @@ from ..auth import require_permissions
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
-@router.get("/")
-async def get_orders(
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["get:orders"]),
-):
+@router.get("/", dependencies=[Depends(require_permissions(["get:orders"]))])
+async def get_orders(db: Session = Depends(get_db)):
     statement = select(Order).options(
         selectinload(Order.order_items).selectinload(OrderItem.item)
     )
@@ -23,23 +20,15 @@ async def get_orders(
     return {"orders": result}
 
 
-@router.get("/{order_id}")
-def get_order(
-    order_id: int,
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["get:order"]),
-):
+@router.get("/{order_id}", dependencies=[Depends(require_permissions(["get:order"]))])
+def get_order(order_id: int, db: Session = Depends(get_db)):
     order = try_get_order(order_id, db)
     order_details = get_order_details(order, db)
     return {"order": order_details}
 
 
-@router.post("/")
-async def create_order(
-    order: OrderCreate,
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:orders"]),
-):
+@router.post("/", dependencies=[Depends(require_permissions(["modify:orders"]))])
+async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
     try_get_user(order.user_id, db)  # make sure user exists
 
     new_order = Order(user_id=order.user_id, date=datetime.now().isoformat())
@@ -54,12 +43,11 @@ async def create_order(
     return {"order": order_details}
 
 
-@router.put("/{order_id}")
+@router.put(
+    "/{order_id}", dependencies=[Depends(require_permissions(["modify:orders"]))]
+)
 async def update_order(
-    order_id: int,
-    order: OrderCreate,
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:orders"]),
+    order_id: int, order: OrderCreate, db: Session = Depends(get_db)
 ):
     existing_order = try_get_order(order_id, db)
 
@@ -79,11 +67,12 @@ async def update_order(
     return {"order": order_details}
 
 
-@router.delete("/{order_id}")
+@router.delete(
+    "/{order_id}", dependencies=[Depends(require_permissions(["modify:orders"]))]
+)
 async def delete_order(
     order_id: int,
     db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:orders"]),
 ):
     order = try_get_order(order_id, db)
 

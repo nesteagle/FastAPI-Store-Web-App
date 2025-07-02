@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Relationship
+import uuid 
 
 
 class Item(SQLModel, table=True):
@@ -12,8 +13,9 @@ class Item(SQLModel, table=True):
 
 
 class User(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     username: str = Field(index=True, max_length=20)
+    auth0_sub: str = Field(index = True, unique = True)
     orders: list["Order"] = Relationship(back_populates="user")
 
 
@@ -26,7 +28,7 @@ class Order(SQLModel, table=True):
 
 
 class OrderItem(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     order_id: int = Field(foreign_key="order.id", index=True)
     order: Order = Relationship(back_populates="order_items")
     item_id: int = Field(foreign_key="item.id", index=True)

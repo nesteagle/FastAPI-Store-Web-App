@@ -8,43 +8,33 @@ from ..auth import require_permissions
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/")
-async def get_users(
-    db: Session = Depends(get_db), auth_result: str = require_permissions(["get:users"])
-):
+@router.get("/", dependencies=[Depends(require_permissions(["get:users"]))])
+async def get_users(db: Session = Depends(get_db)):
     users = db.exec(select(User)).all()
     return {"users": users}
 
 
-@router.get("/{user_id}")
-async def get_user(
-    user_id: int,
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["get:user"]),
-):
+@router.get("/{user_id}", dependencies=[Depends(require_permissions(["get:user"]))])
+async def get_user(user_id: int, db: Session = Depends(get_db)):
     user = try_get_user(user_id, db)
     return {"user": user}
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_permissions(["modify:users"]))])
 async def create_user(
     user: User,
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:users"]),
-):
+    db: Session = Depends(get_db)):
     db.add(user)
     db.commit()
     db.refresh(user)
     return {"user": user}
 
 
-@router.put("/{user_id}")
+@router.put("/{user_id}", dependencies=[Depends(require_permissions(["modify:users"]))])
 async def update_user(
     user_id: int,
     user: User,
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:users"]),
-):
+    db: Session = Depends(get_db)):
     existing_user = try_get_user(user_id, db)
     existing_user.username = user.username
     db.commit()
@@ -52,12 +42,10 @@ async def update_user(
     return {"user": existing_user}
 
 
-@router.delete("/{user_id}")
+@router.delete("/{user_id}", dependencies=[Depends(require_permissions(["modify:users"]))])
 async def delete_user(
     user_id: int,
-    db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:users"]),
-):
+    db: Session = Depends(get_db)):
     user = try_get_user(user_id, db)
     db.delete(user)
     db.commit()

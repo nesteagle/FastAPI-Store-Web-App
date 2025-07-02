@@ -11,7 +11,7 @@ router = APIRouter(prefix="/items", tags=["items"])
 @router.get("/")
 async def get_items(
     search: str = Query("", description="Search items by name"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     statement = select(Item)
     if search:
@@ -20,17 +20,17 @@ async def get_items(
     items = db.exec(statement).all()
     return {"items": items}
 
+
 @router.get("/{item_id}")
 async def get_item(item_id: int, db: Session = Depends(get_db)):
     item = try_get_item(item_id, db)
     return {"item": item}
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(require_permissions(["modify:items"]))])
 async def create_item(
     item: Item,
     db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:items"]),
 ):
     item = encode_item_fields(item)
     db.add(item)
@@ -39,11 +39,12 @@ async def create_item(
     return {"item": item}
 
 
-@router.delete("/{item_id}")
+@router.delete(
+    "/{item_id}", dependencies=[Depends(require_permissions(["modify:items"]))]
+)
 async def delete_item(
     item_id: int,
     db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:items"]),
 ):
     item = try_get_item(item_id, db)
     db.delete(item)
@@ -51,12 +52,11 @@ async def delete_item(
     return {"message": f"Item {item_id} deleted successfully"}
 
 
-@router.put("/{item_id}")
+@router.put("/{item_id}", dependencies=[Depends(require_permissions(["modify:items"]))])
 async def update_item(
     item_id: int,
     item: Item,
     db: Session = Depends(get_db),
-    auth_result: str = require_permissions(["modify:items"]),
 ):
     existing_item = try_get_item(item_id, db)
     existing_item.name = item.name
