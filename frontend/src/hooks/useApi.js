@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { apiRequest } from "../api/baseApi";
 
 
-export function useApi() {
+export function useAuthenticatedApi() {
     const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
     const callApi = useCallback(

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useApi } from "./useApi";
+import { useAuthenticatedApi } from "./useApi";
 
 export default function useFetchList(fetchFunction, dataKey) {
-  const { callApi } = useApi();
+  const { callApi } = useAuthenticatedApi();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

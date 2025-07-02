@@ -1,29 +1,52 @@
 import { useState, useEffect } from "react";
 
 export default function useShoppingCart() {
+    const STORAGE_KEY = "cart";
+
     const [cart, setCart] = useState(() => {
-        const storedCart = localStorage.getItem("shopping-cart");
-        return storedCart ? JSON.parse(storedCart) : [];
+        try {
+            const storedCart = localStorage.getItem(STORAGE_KEY);
+            return storedCart ? JSON.parse(storedCart) : [];
+        } catch (error) {
+            console.error("Failed to read shopping cart from localStorage", error);
+            return [];
+        }
     });
 
     useEffect(() => {
-        localStorage.setItem("shopping-cart", JSON.stringify(cart));
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        } catch (error) {
+            console.error("Failed to save shopping cart to localStorage", error);
+        }
     }, [cart]);
 
-    const setItem = (item, quantity) => {
+    // handles item quantity change (adding, removing)
+    // quantity must be >=1
+    const changeCartItem = (item, quantity) => {
         setCart((prevCart) => {
-            if (quantity <= 0) {
-                return prevCart.filter((i) => i.id !== item.id);
-            }
-            const existingItem = prevCart.find((i) => i.id === item.id);
-            if (existingItem) {
-                return prevCart.map((i) =>
-                    i.id === item.id ? { ...i, quantity } : i
+            const sameItem = prevCart.find((cartItem) => cartItem.id === item.id);
+            if (sameItem) {
+                return prevCart.map((cartItem) =>
+                    cartItem.id === item.id
+                        ? { ...cartItem, quantity: quantity }
+                        : cartItem
                 );
+            } else {
+                return [...prevCart, { ...item, quantity: quantity }];
             }
-            return [...prevCart, { ...item, quantity }];
         });
     };
 
-    return { cart, setItem };
+    // Accessed through "remove" button on cart
+    const removeFromCart = (itemId) => {
+        setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+    };
+
+    // Accessed through "clear cart" and confirmation 
+    const clearCart = () => {
+        setCart([]);
+    };
+
+    return { cart, setCart, changeCartItem, removeFromCart, clearCart };
 }

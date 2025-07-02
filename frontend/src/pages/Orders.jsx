@@ -3,7 +3,7 @@ import ResourceSearch from "../components/ResourceSearch";
 
 export default function Orders() {
     const columns = useMemo(() => [
-        { key: 'id', label: 'ID' },
+        { key: 'id', label: 'UUID' },
         { key: 'user_id', label: 'User ID' },
         { key: 'date', label: 'Date' },
         {

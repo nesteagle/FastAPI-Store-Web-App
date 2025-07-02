@@ -1,9 +1,9 @@
 import FormField from "./FormField";
-import { useApi } from "../hooks/useApi";
+import { useAuthenticatedApi } from "../hooks/useApi";
 import useCreationForm from "../hooks/useCreationForm";
 
 export default function UserCreationForm() {
-    const { callApi } = useApi();
+    const { callApi } = useAuthenticatedApi();
 
     const createUserUsingApi = async (data) => {
         return await callApi('/users/', 'POST', data);

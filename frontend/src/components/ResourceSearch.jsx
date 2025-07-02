@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useApi } from "../hooks/useApi";
+import { useAuthenticatedApi } from "../hooks/useApi";
+import { getItems } from "../api/itemsApi";
 import ObjectViewTable from "./ObjectViewTable";
 
 export default function ResourceSearch({ resource, dataKey, columns }) {
-    const { callApi } = useApi();
+    const { callApi } = useAuthenticatedApi();
     const [query, setQuery] = useState("");
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -13,13 +14,16 @@ export default function ResourceSearch({ resource, dataKey, columns }) {
         async function fetchData() {
             setIsLoading(true);
             try {
-                // If a query is provided, append it as a search query; otherwise, fetch all resources.
-                const endpoint =
-                    query.trim() !== ""
-                        ? `/${resource}/?search=${encodeURIComponent(query)}`
-                        : `/${resource}/`;
-                const response = await callApi(endpoint);
-                setData(response[dataKey]);
+                if (resource === "items") {
+                    setData(getItems(query));
+                } else {
+                    const endpoint =
+                        query.trim() !== ""
+                            ? `/${resource}/?search=${encodeURIComponent(query)}`
+                            : `/${resource}/`;
+                    const response = await callApi(endpoint);
+                    setData(response[dataKey]);
+                }
             } catch (err) {
                 setError(err);
             } finally {
