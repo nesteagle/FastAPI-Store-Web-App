@@ -8,8 +8,9 @@ from sqlmodel import Session, select
 from .database import get_db
 from .models import User
 import jwt
-from fastapi import Depends, HTTPException, status, Security
-from fastapi.security import SecurityScopes, HTTPAuthorizationCredentials, HTTPBearer
+from fastapi import Depends, HTTPException, status, Security, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.responses import RedirectResponse
 
 from fastapi_plugin import Auth0FastAPI
 
@@ -45,10 +46,9 @@ class ExtractUserSub:
 
     async def extract(
         self, token: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer())
-    ) -> str:
+    ) -> dict:
         if token is None:
             raise UnauthenticatedException()
-
         try:
             signing_key = self.jwks_client.get_signing_key_from_jwt(
                 token.credentials
@@ -63,12 +63,13 @@ class ExtractUserSub:
             )
         except Exception as error:
             raise UnauthorizedException(str(error))
-
         user_sub = payload.get("sub")
         if not user_sub:
             raise UnauthorizedException("Token does not contain user subject.")
-
         return user_sub
+
+
+user_sub_extractor = ExtractUserSub()
 
 
 def get_access_token():
@@ -111,21 +112,20 @@ def require_permissions(required_permissions: list):
             if permission not in permissions:
                 raise UnauthorizedException("Missing permission")
         return claims
+
     return dependency
 
 
-def require_sub():
-    sub = ExtractUserSub()
-    return Security(sub)
-
-
 def get_current_user(
-    username: str, user_sub: str = Depends(require_sub), db: Session = Depends(get_db)
+    user_sub: str = Security(user_sub_extractor.extract),
+    db: Session = Depends(get_db),
 ):
     user = db.exec(select(User).where(User.auth0_sub == user_sub)).first()
     if not user:
-        user = User(auth0_sub=user_sub, name=username)
+        user = User(
+            auth0_sub=user_sub,
+        )
         db.add(user)
         db.commit()
-        db.refresh()
+        db.refresh(user)
     return user

@@ -3,9 +3,10 @@ import UserCreationForm from '../components/UserCreationForm';
 import ResourceSearch from '../components/ResourceSearch';
 
 export default function Users() {
+    // ADMIN ONLY viewable
     const columns = useMemo(() => [
         { key: 'id', label: 'ID' },
-        { key: 'username', label: 'Username' }
+        { key: 'auth0_sub', label: 'Auth0 ID' }
     ], []);
 
     return (

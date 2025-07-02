@@ -36,7 +36,7 @@ async def update_user(
     user: User,
     db: Session = Depends(get_db)):
     existing_user = try_get_user(user_id, db)
-    existing_user.username = user.username
+    existing_user.auth0_sub = user.auth0_sub
     db.commit()
     db.refresh(existing_user)
     return {"user": existing_user}
