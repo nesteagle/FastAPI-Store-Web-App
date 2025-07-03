@@ -23,14 +23,16 @@ export function CartProvider({ children }) {
         }
     }, [cart]);
 
-    // handles item quantity change (adding, removing)
-    // quantity must be >=1
-    function changeCartItem(product, quantity) {
+    // adds item with quantity to cart, or adds quantity items to cart
+    // requires quantity to be >=1
+    function addCartItem(product, quantity) {
         setCart((prevCart) => {
             const existing = prevCart.find((item) => item.id === product.id);
             if (existing) {
                 return prevCart.map((item) =>
-                    item.id === product.id ? { ...item, quantity } : item
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
                 );
             } else {
                 return [...prevCart, { ...product, quantity }];
@@ -52,7 +54,7 @@ export function CartProvider({ children }) {
         <CartContext.Provider
             value={{
                 cart,
-                changeCartItem,
+                addCartItem,
                 removeFromCart,
                 clearCart,
             }}

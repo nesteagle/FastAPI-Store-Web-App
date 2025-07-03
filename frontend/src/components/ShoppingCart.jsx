@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
 import FormField from "./FormField";
 import { useShoppingCart } from "../context/CartContext";
+import { useNotification } from "../context/NotificationContext";
 
 export default function ShoppingCart({ onClose }) {
     const { cart, changeCartItem, removeFromCart, clearCart } = useShoppingCart();
+    const { showConfirm } = useNotification();
+
+    async function handleClearCart() {
+        const confirmed = await showConfirm({
+            title: "Clear Cart",
+            message: "Are you sure you want to remove all items from your cart? This action cannot be undone.",
+            confirmLabel: "Clear Cart",
+        });
+        if (confirmed) {
+            clearCart();
+        }
+    }
 
     return (
         <div className="absolute right-0 mt-2 w-96 max-w-[95vw] bg-surface rounded-xl shadow-2xl border border-surface-muted z-50 p-6 animate-fade-in">
@@ -70,7 +83,7 @@ export default function ShoppingCart({ onClose }) {
                         <div className="flex gap-2">
                             <button
                                 className="bg-error text-white px-3 py-2 rounded shadow hover:bg-error-deep transition w-1/2"
-                                onClick={clearCart}
+                                onClick={handleClearCart}
                             >
                                 Clear Cart
                             </button>
