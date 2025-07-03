@@ -1,19 +1,30 @@
 import FormField from "./FormField";
-import { useApi } from "../hooks/useApi";
+import { useAuthenticatedApi } from "../hooks/useApi";
+import { useMemo } from "react";
 import useCreationForm from "../hooks/useCreationForm";
 
 export default function ItemCreationForm() {
-    const { callApi } = useApi();
+    const { callApi } = useAuthenticatedApi();
 
-    const createItemUsingApi = async (data) => {
-        return await callApi('/items/', 'POST', data);
-    };
+    async function createItemUsingApi(data) {
+        await callApi('/items/', 'POST', data);
+    }
 
-    const initialState = { name: "", price: "", description: "", image_src: "" };
-    const { formData, handleChange, handleSubmit } = useCreationForm(initialState, createItemUsingApi);
+    const initialState = useMemo(
+        () => ({ name: "", price: "", description: "", image_src: "" }),
+        []
+    );
+    const { formData, handleChange, handleSubmit } = useCreationForm(
+        initialState,
+        createItemUsingApi
+    );
 
     return (
-        <form className="product-form" onSubmit={handleSubmit}>
+        <form
+            className="bg-surface p-6 rounded-lg shadow-md text-text"
+            onSubmit={handleSubmit}
+        >
+            <h3 className="text-2xl font-semibold mb-4">Create New Item</h3>
             <FormField
                 label="Name:"
                 id="name"
@@ -22,6 +33,7 @@ export default function ItemCreationForm() {
                 required
                 value={formData.name}
                 onChange={handleChange}
+                width="w-full"
             />
             <FormField
                 label="Price:"
@@ -31,7 +43,9 @@ export default function ItemCreationForm() {
                 step="0.01"
                 min="0.01"
                 value={formData.price}
-                onChange={handleChange}
+                onChange={handleChange} 
+                width="w-full"
+
             />
             <FormField
                 label="Description:"
@@ -39,7 +53,9 @@ export default function ItemCreationForm() {
                 type="text"
                 name="description"
                 value={formData.description}
-                onChange={handleChange}
+                onChange={handleChange} 
+                width="w-full"
+
             />
             <FormField
                 label="Image Link (must start with https:// or http://):"
@@ -48,9 +64,16 @@ export default function ItemCreationForm() {
                 name="image_src"
                 required
                 value={formData.image_src}
-                onChange={handleChange}
+                onChange={handleChange} 
+                width="w-full"
+
             />
-            <button type="submit">Create Item</button>
+            <button
+                type="submit"
+                className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-bold rounded"
+            >
+                Create Item
+            </button>
         </form>
     );
 }
