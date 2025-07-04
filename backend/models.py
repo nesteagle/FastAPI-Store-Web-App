@@ -15,6 +15,7 @@ class Item(SQLModel, table=True):
 class User(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     auth0_sub: str = Field(index=True, unique=True)
+    email: str = Field(index=True)
     orders: list["Order"] = Relationship(back_populates="user")
 
 

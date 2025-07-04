@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Navigate } from "react-router-dom";
+import { useAuthenticatedApi } from "../hooks/useApi";
+
 
 export default function Callback() {
     const { isLoading, isAuthenticated, error, getAccessTokenSilently } = useAuth0();
     const [backendUser, setBackendUser] = useState(null);
-
+    const { callApi } = useAuthenticatedApi();
     useEffect(() => {
         const fetchBackendUser = async () => {
             try {
-                const token = await getAccessTokenSilently();
-                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/myaccount`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                });
-                const data = await res.json();
+                const data = await callApi("/myaccount");
+                console.log(data);
                 setBackendUser(data);
             } catch (err) {
                 setBackendUser({ error: err.message });
@@ -32,10 +30,9 @@ export default function Callback() {
     if (!backendUser) return <div>Loading user info...</div>;
     if (backendUser.error) return <div>Backend error: {backendUser.error}</div>;
 
+    // TODO: consider adding toast here
+
     return (
-        <div>
-            <h2>Welcome!</h2>
-            {/* <pre>{JSON.stringify(backendUser, null, 2)}</pre> */}
-        </div>
+        <Navigate to="/" replace />
     );
 }

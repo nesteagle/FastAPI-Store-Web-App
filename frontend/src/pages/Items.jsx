@@ -21,7 +21,6 @@ export default function Items() {
         async function fetchItems() {
             try {
                 const data = await getItems();
-                console.log(data);
                 setItems(data);
             } catch (error) {
                 console.error("Failed to fetch items:", error);

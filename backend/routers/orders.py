@@ -1,19 +1,23 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select, delete
-from ..models import Order, OrderCreate, OrderItem, Item
+from ..models import Order, OrderCreate, OrderItem, User
 from ..database import get_db
 from datetime import datetime
 from .utils import try_get_user, try_get_order, get_order_details, add_order_items
 from sqlalchemy.orm import selectinload
-from ..auth import require_permissions
+from ..auth import require_permissions, get_current_user
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
-@router.get("/", dependencies=[Depends(require_permissions(["get:orders"]))])
-async def get_orders(db: Session = Depends(get_db)):
-    statement = select(Order).options(
-        selectinload(Order.order_items).selectinload(OrderItem.item)
+@router.get("/") #, dependencies=[Depends(require_permissions(["get:orders"]))]
+async def get_my_orders(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    statement = (
+        select(Order)
+        .where(Order.user_id == current_user.id)
+        .options(selectinload(Order.order_items).selectinload(OrderItem.item))
     )
     orders = db.exec(statement).all()
     result = [get_order_details(order, db) for order in orders]

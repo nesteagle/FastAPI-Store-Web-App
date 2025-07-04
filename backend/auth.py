@@ -22,7 +22,7 @@ AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
 AUTH0_API_AUDIENCE = os.getenv("AUTH0_API_AUDIENCE")
 AUTH0_ISSUER = os.getenv("AUTH0_ISSUER")
 AUTH0_ALGORITHM = os.getenv("AUTH0_ALGORITHM")
-
+EMAIL_CUSTOM_CLAIM = "https://fastapi-store-webapp/email"
 
 auth = Auth0FastAPI(domain=AUTH0_DOMAIN, audience=AUTH0_API_AUDIENCE)
 
@@ -39,7 +39,7 @@ class UnauthenticatedException(HTTPException):
         )
 
 
-class ExtractUserSub:
+class ExtractUserData:
     def __init__(self):
         jwks_url = f"https://{AUTH0_DOMAIN}/.well-known/jwks.json"
         self.jwks_client = jwt.PyJWKClient(jwks_url)
@@ -63,13 +63,14 @@ class ExtractUserSub:
             )
         except Exception as error:
             raise UnauthorizedException(str(error))
-        user_sub = payload.get("sub")
-        if not user_sub:
-            raise UnauthorizedException("Token does not contain user subject.")
-        return user_sub
+        sub = payload.get("sub")
+        email = payload.get(EMAIL_CUSTOM_CLAIM)
+        if not sub or not email:
+            raise UnauthorizedException("Token does not contain required data")
+        return {"sub": sub, "email": email}
 
 
-user_sub_extractor = ExtractUserSub()
+user_sub_extractor = ExtractUserData()
 
 
 def get_access_token():
@@ -117,14 +118,17 @@ def require_permissions(required_permissions: list):
 
 
 def get_current_user(
-    user_sub: str = Security(user_sub_extractor.extract),
+    user_data: dict = Security(user_sub_extractor.extract),
     db: Session = Depends(get_db),
 ):
+    user_sub = user_data["sub"]
+    user_email = user_data["email"]
     user = db.exec(select(User).where(User.auth0_sub == user_sub)).first()
-    if not user:
-        user = User(
-            auth0_sub=user_sub,
-        )
+    if user:
+        user.email = user_email # update email
+        db.commit()
+    else:
+        user = User(auth0_sub=user_sub, email=user_email)
         db.add(user)
         db.commit()
         db.refresh(user)

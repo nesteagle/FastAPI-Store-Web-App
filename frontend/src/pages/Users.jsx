@@ -6,6 +6,7 @@ export default function Users() {
     // ADMIN ONLY viewable
     const columns = useMemo(() => [
         { key: 'id', label: 'ID' },
+        { key: 'email', label: 'Email' },
         { key: 'auth0_sub', label: 'Auth0 ID' }
     ], []);
 
