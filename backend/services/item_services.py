@@ -1,0 +1,35 @@
+from sqlmodel import Session, select
+from ..models import Item
+from ..routers.utils import try_get_item, encode_item_fields
+
+def get_items_service(search: str, db: Session):
+    statement = select(Item)
+    if search:
+        statement = statement.where(Item.name.ilike(f"%{search}%"))
+    return db.exec(statement).all()
+
+def get_item_service(item_id: int, db: Session):
+    return try_get_item(item_id, db)
+
+def create_item_service(item: Item, db: Session):
+    item = encode_item_fields(item)
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item
+
+def delete_item_service(item_id: int, db: Session):
+    item = try_get_item(item_id, db)
+    db.delete(item)
+    db.commit()
+    return item
+
+def update_item_service(item_id: int, new_item: Item, db: Session):
+    existing_item = try_get_item(item_id, db)
+    existing_item.name = new_item.name
+    existing_item.description = new_item.description
+    existing_item.price = new_item.price
+    existing_item.image_src = new_item.image_src
+    db.commit()
+    db.refresh(existing_item)
+    return existing_item

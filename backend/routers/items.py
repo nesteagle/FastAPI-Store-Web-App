@@ -1,9 +1,15 @@
 from fastapi import APIRouter, Depends, Query
-from sqlmodel import Session, select
+from sqlmodel import Session
 from ..models import Item
 from ..database import get_db
-from .utils import try_get_item, encode_item_fields
 from ..auth import require_permissions
+from ..services.item_services import (
+    get_items_service,
+    get_item_service,
+    create_item_service,
+    delete_item_service,
+    update_item_service,
+)
 
 router = APIRouter(prefix="/items", tags=["items"])
 
@@ -13,17 +19,13 @@ async def get_items(
     search: str = Query("", description="Search items by name"),
     db: Session = Depends(get_db),
 ):
-    statement = select(Item)
-    if search:
-        # ilike for case insensitive matching
-        statement = statement.where(Item.name.ilike(f"%{search}%"))
-    items = db.exec(statement).all()
+    items = get_items_service(search, db)
     return {"items": items}
 
 
 @router.get("/{item_id}")
 async def get_item(item_id: int, db: Session = Depends(get_db)):
-    item = try_get_item(item_id, db)
+    item = get_item_service(item_id, db)
     return {"item": item}
 
 
@@ -32,11 +34,8 @@ async def create_item(
     item: Item,
     db: Session = Depends(get_db),
 ):
-    item = encode_item_fields(item)
-    db.add(item)
-    db.commit()
-    db.refresh(item)
-    return {"item": item}
+    new_item = create_item_service(item, db)
+    return {"item": new_item}
 
 
 @router.delete(
@@ -46,9 +45,7 @@ async def delete_item(
     item_id: int,
     db: Session = Depends(get_db),
 ):
-    item = try_get_item(item_id, db)
-    db.delete(item)
-    db.commit()
+    delete_item_service(item_id, db)
     return {"message": f"Item {item_id} deleted successfully"}
 
 
@@ -58,12 +55,5 @@ async def update_item(
     item: Item,
     db: Session = Depends(get_db),
 ):
-    existing_item = try_get_item(item_id, db)
-    existing_item.name = item.name
-    existing_item.description = item.description
-    existing_item.price = item.price
-    existing_item.image_src = item.image_src
-    existing_item = encode_item_fields(item)
-    db.commit()
-    db.refresh(existing_item)
-    return {"item": existing_item}
+    updated_item = update_item_service(item_id, item, db)
+    return {"item": updated_item}
