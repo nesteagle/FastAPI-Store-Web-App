@@ -10,8 +10,17 @@ export default function CheckoutButton() {
 
     const handleCheckout = async () => {
         if (!isAuthenticated) return;
-        const response = await callApi("/create-checkout-session/", "POST", cart);
+        console.log(formatCart(cart))
+        const response = await callApi("/create-checkout-session/", "POST", formatCart(cart));
         window.location.href = response.url; // Redirect to Stripe Checkout
+    };
+
+    const formatCart = (cart) => {
+        const data = cart.map(item => ({
+            id: item.id,
+            qty: item.quantity
+        }));
+        return JSON.stringify(data); 
     };
 
     return (

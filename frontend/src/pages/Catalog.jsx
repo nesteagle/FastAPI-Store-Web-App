@@ -95,16 +95,17 @@ export default function Catalog({ selectedCategory }) {
                             placeholder={`Search ${category.toLowerCase()} products...`}
                             className="w-full pl-12 pr-14 py-4 rounded-full border-2 border-accent/30 bg-white shadow-lg text-lg focus:outline-none focus:ring-2 focus:ring-accent/40 transition placeholder:text-accent/60"
                             aria-label="Search products"
-                        />
+                        />                        
                         {search && (
                             <button
                                 aria-label="Clear search"
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-accent text-2xl"
+                                className="absolute top-2 right-4 flex items-center text-text-muted hover:text-accent text-4xl"
                                 onClick={() => setSearch("")}
                             >
                                 &times;
                             </button>
                         )}
+
                     </div>
                 </div>
             </section>
@@ -113,10 +114,13 @@ export default function Catalog({ selectedCategory }) {
                     <ProductGrid products={filteredProducts} />
                 ) : (
                     <div className="flex flex-col items-center py-24">
-                        <svg className="w-16 h-16 bg-gray-100 mb-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                        {/* <svg className="w-16 h-16 bg-gray-100 mb-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
                             <path d="M8 12l2 2 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                        </svg> 
+                        REFACTOR TO MAGINIFIYING GLASS or other icon
+                        */}
+
                         <p className="text-text-muted text-lg">No products found in this category.</p>
                     </div>
                 )}

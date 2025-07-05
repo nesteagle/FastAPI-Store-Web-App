@@ -115,7 +115,7 @@ export default function ProductPage() {
                         </div>
 
                         <button
-                            className="bg-accent text-white font-semibold px-12 py-5 rounded-2xl shadow-xl hover:bg-accent-hover transition text-2xl flex w-full items-center focus:scale-105 active:scale-95 transform transition-transform duration-150"
+                            className="bg-accent text-white font-semibold px-12 py-5 rounded-2xl shadow-xl hover:bg-accent-hover  text-2xl flex w-full items-center focus:scale-105 active:scale-95 transform transition-transform duration-150"
                             onClick={() => {
                                 addCartItem(product, quantity);
                                 {

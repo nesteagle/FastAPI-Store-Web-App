@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select, delete
 from ..models import Order, OrderCreate, OrderItem, User
-from ..database import get_db
+from ..database import get_db, engine
 from datetime import datetime
 from .utils import try_get_user, try_get_order, get_order_details, add_order_items
 from sqlalchemy.orm import selectinload
@@ -10,7 +10,21 @@ from ..auth import require_permissions, get_current_user
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
-@router.get("/") #, dependencies=[Depends(require_permissions(["get:orders"]))]
+def add_order_to_db(order: Order, order_items: list):
+    with Session(engine) as db:
+        db.add(order)
+        db.flush()
+        for item in order_items:
+            item_id = item["id"]
+            quantity = item["qty"]
+            order_item = OrderItem(order_id=order.id, item_id=item_id, quantity=quantity)
+            db.add(order_item)
+
+        db.commit()
+        db.refresh(order)
+
+
+@router.get("/")  # , dependencies=[Depends(require_permissions(["get:orders"]))]
 async def get_my_orders(
     current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
