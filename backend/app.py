@@ -1,28 +1,44 @@
-from fastapi import FastAPI, Depends, Request, HTTPException, Header
-from fastapi.middleware.cors import CORSMiddleware
-from .database import create_db_and_tables, get_db
-from contextlib import asynccontextmanager
-from .routers import items, users, orders, admin
-from fastapi.responses import RedirectResponse
-from .models import User, Order, Item
-from .auth import get_current_user
 import os
+import json
+
+from fastapi import (
+    FastAPI,
+    Depends,
+    Request,
+    HTTPException,
+    Header,
+    status,
+)
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 import stripe
-import json
-from .routers.orders import add_order_to_db
+
+from .database import create_db_and_tables, get_db_session
+from .routers import items, users, orders
+from .models import OrderItemCreate, User, OrderCreate
+from .auth import get_current_user
+from .services.order_services import create_order_service
+from .services.item_services import get_item_service
+from pydantic import BaseModel
 
 load_dotenv()
 
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+BASE_URL = os.getenv("BASE_URL")
+
+if not STRIPE_SECRET_KEY or not STRIPE_WEBHOOK_SECRET or not BASE_URL:
+    raise Exception("Missing required Stripe configuration.")
+
+stripe.api_key = STRIPE_SECRET_KEY
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()
     yield
-    # cleanup here if needed
 
 
 app = FastAPI(lifespan=lifespan)
@@ -43,11 +59,15 @@ app.add_middleware(
 app.include_router(items.router)
 app.include_router(users.router)
 app.include_router(orders.router)
-app.include_router(admin.router)
 
 
-@app.get("/myaccount")
-async def get_me(current_user: User = Depends(get_current_user)):
+class CartItem(BaseModel):
+    id: int
+    qty: int
+
+
+@app.get("/myaccount", response_model=User)
+async def get_me(current_user: User = Depends(get_current_user)) -> User:
     return current_user
 
 
@@ -59,42 +79,44 @@ async def auth_callback(request: Request):
 
 @app.post("/create-checkout-session/")
 async def create_checkout_session(
-    request: Request,
-    current_user=Depends(get_current_user),
+    request: Request, current_user: User = Depends(get_current_user)
 ):
-    # TODO: check if user email is verified before
-    cart_items = await request.json()  # Already parsed JSON list
-    cart_items_obj = json.loads(cart_items)
-    item_id_to_qty = {item["id"]: item["qty"] for item in cart_items_obj}
+    # TODO: perhaps check for email verification here
+    cart_items = await request.json()
+    item_id_to_qty = {item["id"]: item["qty"] for item in json.loads(cart_items)}
     item_ids = list(item_id_to_qty.keys())
 
-    db_gen = get_db()
-    db = next(db_gen)
+    items = [
+        get_item_service(item_id=item_id, db=get_db_session()) for item_id in item_ids
+    ]
 
-    from sqlalchemy import select
-    # TODO: REFACTOR
-    stmt = select(Item).where(Item.id.in_(item_ids))
-    items = db.exec(stmt).scalars().all()
+    if len(items) != len(item_ids):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Some items in the cart do not exist.",
+        )
 
     line_items = []
     for item in items:
         qty = item_id_to_qty.get(item.id, 1)
-        line_items.append({
-            "price_data": {
-                "currency": "usd",
-                "product_data": {"name": item.name},
-                "unit_amount": int(item.price * 100),
-            },
-            "quantity": qty,
-        })
+        line_items.append(
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": item.name},
+                    "unit_amount": int(item.price * 100),
+                },
+                "quantity": qty,
+            }
+        )
 
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=line_items,
             mode="payment",
-            success_url=os.getenv("BASE_URL") + "/success",
-            cancel_url=os.getenv("BASE_URL") + "/cancel",
+            success_url=f"{BASE_URL}/success",
+            cancel_url=f"{BASE_URL}/cancel",
             metadata={
                 "user_id": str(current_user.id),
                 "cart_items": cart_items,
@@ -103,15 +125,20 @@ async def create_checkout_session(
         )
         return {"url": session.url}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Stripe error: " + str(e))
 
 
 @app.post("/webhook/")
-async def stripe_webhook(request: Request, stripe_signature: str = Header(None)):
+async def stripe_webhook(
+    request: Request,
+    stripe_signature: str = Header(None),
+):
     payload = await request.body()
     try:
         event = stripe.Webhook.construct_event(
-            payload=payload, sig_header=stripe_signature, secret=STRIPE_WEBHOOK_SECRET
+            payload=payload,
+            sig_header=stripe_signature,
+            secret=STRIPE_WEBHOOK_SECRET,
         )
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid payload")
@@ -120,21 +147,19 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        user_id = session["metadata"].get("user_id")
-        cart = session["metadata"].get("cart_items", "[]")
-        email = session.get("customer_email")
-        amount = session["amount_total"]
-        currency = session["currency"]
-        order_id = session["id"]
-
-        add_order_to_db(
-            Order(
-                stripe_id=order_id,
-                currency=currency,
-                amount=amount,
-                user_id=user_id,
-                email=email,
-            ),
-            order_items=json.loads(cart),
+        user_id = session["metadata"]["user_id"]
+        cart = session["metadata"]["cart_items"]
+        items = [OrderItemCreate(item_id=item["id"], quantity=item["qty"]) for item in json.loads(cart)]
+        order_data = OrderCreate(
+            user_id=user_id,
+            items=items,
+            stripe_id=session["id"],
+            currency=session["currency"],
+            amount=session["amount_total"],
+            email=session["customer_email"],
         )
+        try:
+            create_order_service(order_data=order_data, db=get_db_session())
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Order DB error: " + str(e))
     return {"status": "success"}

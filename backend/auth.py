@@ -1,18 +1,17 @@
-import json
 import os
-from typing import Optional
+from typing import Optional, Sequence, Dict, Any
 
 from dotenv import load_dotenv
-import http.client
 from sqlmodel import Session, select
+from fastapi import Depends, HTTPException, status, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi_plugin import Auth0FastAPI
+import jwt
+from jwt import PyJWKClient, PyJWTError
+from pydantic import BaseModel
+
 from .database import get_db
 from .models import User
-import jwt
-from fastapi import Depends, HTTPException, status, Security, Request
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi.responses import RedirectResponse
-
-from fastapi_plugin import Auth0FastAPI
 
 load_dotenv()
 
@@ -24,11 +23,14 @@ AUTH0_ISSUER = os.getenv("AUTH0_ISSUER")
 AUTH0_ALGORITHM = os.getenv("AUTH0_ALGORITHM")
 EMAIL_CUSTOM_CLAIM = "https://fastapi-store-webapp/email"
 
+if not all([AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_API_AUDIENCE, AUTH0_ISSUER]):
+    raise Exception("Missing required Auth0 configuration.")
+
 auth = Auth0FastAPI(domain=AUTH0_DOMAIN, audience=AUTH0_API_AUDIENCE)
 
 
 class UnauthorizedException(HTTPException):
-    def __init__(self, detail: str):
+    def __init__(self, detail: str = "Unauthorized"):
         super().__init__(status.HTTP_403_FORBIDDEN, detail=detail)
 
 
@@ -39,75 +41,68 @@ class UnauthenticatedException(HTTPException):
         )
 
 
-class ExtractUserData:
-    def __init__(self):
-        jwks_url = f"https://{AUTH0_DOMAIN}/.well-known/jwks.json"
-        self.jwks_client = jwt.PyJWKClient(jwks_url)
+class ExtractedUserData(BaseModel):
+    sub: str
+    email: str
 
-    async def extract(
-        self, token: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer())
-    ) -> dict:
-        if token is None:
-            raise UnauthenticatedException()
+
+class JWTValidator:
+    def __init__(
+        self,
+        domain: str,
+        audience: str,
+        issuer: str,
+        algorithm: str,
+        email_claim: str,
+    ) -> None:
+        jwks_url = f"https://{domain}/.well-known/jwks.json"
+        self.jwks_client = PyJWKClient(jwks_url)
+        self.audience = audience
+        self.issuer = issuer
+        self.algorithm = algorithm
+        self.email_claim = email_claim
+
+    def extract_user_data(self, token: str) -> ExtractedUserData:
         try:
-            signing_key = self.jwks_client.get_signing_key_from_jwt(
-                token.credentials
-            ).key
+            signing_key = self.jwks_client.get_signing_key_from_jwt(token).key
             payload = jwt.decode(
-                token.credentials,
+                token,
                 signing_key,
-                algorithms=AUTH0_ALGORITHM,
-                audience=AUTH0_API_AUDIENCE,
-                issuer=AUTH0_ISSUER,
+                algorithms=[self.algorithm],
+                audience=self.audience,
+                issuer=self.issuer,
                 leeway=10,
             )
-        except Exception as error:
+        except PyJWTError as error:
             raise UnauthorizedException(str(error))
         sub = payload.get("sub")
-        email = payload.get(EMAIL_CUSTOM_CLAIM)
+        email = payload.get(self.email_claim)
         if not sub or not email:
             raise UnauthorizedException("Token does not contain required data")
-        return {"sub": sub, "email": email}
+        return ExtractedUserData(sub=sub, email=email)
 
 
-user_sub_extractor = ExtractUserData()
+jwt_validator = JWTValidator(
+    domain=AUTH0_DOMAIN,
+    audience=AUTH0_API_AUDIENCE,
+    issuer=AUTH0_ISSUER,
+    algorithm=AUTH0_ALGORITHM,
+    email_claim=EMAIL_CUSTOM_CLAIM,
+)
 
 
-def get_access_token():
-    conn = http.client.HTTPSConnection(AUTH0_DOMAIN)
-    payload = {
-        "client_id": AUTH0_CLIENT_ID,
-        "client_secret": AUTH0_CLIENT_SECRET,
-        "audience": f"https://{AUTH0_DOMAIN}/api/v2/",
-        "grant_type": "client_credentials",
-    }
-    headers = {"content-type": "application/json"}
-    conn.request("POST", "/oauth/token", json.dumps(payload), headers)
-    res = conn.getresponse()
-    data = res.read()
-    return json.loads(data.decode("utf-8"))["access_token"]
+async def extract_user_data_dependency(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer()),
+) -> ExtractedUserData:
+    if credentials is None:
+        raise UnauthenticatedException()
+    return jwt_validator.extract_user_data(credentials.credentials)
 
 
-def update_from_auth0(db: Session = Depends(get_db)):
-    conn = http.client.HTTPSConnection(AUTH0_DOMAIN)
-    headers = {"authorization": f"Bearer {get_access_token()}"}
-    conn.request("GET", "/api/v2/users", headers=headers)
-    res = conn.getresponse()
-    users = json.loads(res.read().decode("utf-8"))
-    for user in users:
-        username = user.get("username")
-        if (
-            username
-            and not db.exec(select(User).where(User.username == username)).first()
-        ):
-            db.add(User(username=username))
-    db.commit()
-
-
-def require_permissions(required_permissions: list):
-    def dependency(claims: dict = Depends(auth.require_auth())):
+def require_permissions(required_permissions: Sequence[str]):
+    def dependency(claims: dict = Depends(auth.require_auth())) -> dict:
         if claims is None:
-            raise UnauthorizedException
+            raise UnauthorizedException()
         permissions = claims.get("permissions", [])
         for permission in required_permissions:
             if permission not in permissions:
@@ -117,19 +112,28 @@ def require_permissions(required_permissions: list):
     return dependency
 
 
-def get_current_user(
-    user_data: dict = Security(user_sub_extractor.extract),
-    db: Session = Depends(get_db),
-):
-    user_sub = user_data["sub"]
-    user_email = user_data["email"]
+def get_or_create_user(
+    db: Session, user_sub: str, user_email: str
+) -> User:
     user = db.exec(select(User).where(User.auth0_sub == user_sub)).first()
     if user:
-        user.email = user_email # update email
-        db.commit()
-    else:
-        user = User(auth0_sub=user_sub, email=user_email)
-        db.add(user)
+        if user.email != user_email:
+            user.email = user_email
+            db.commit()
+        return user
+    user = User(auth0_sub=user_sub, email=user_email)
+    db.add(user)
+    try:
         db.commit()
         db.refresh(user)
+    except Exception:
+        db.rollback()
+        raise
     return user
+
+
+def get_current_user(
+    user_data: ExtractedUserData = Security(extract_user_data_dependency),
+    db: Session = Depends(get_db),
+) -> User:
+    return get_or_create_user(db, user_data.sub, user_data.email)
