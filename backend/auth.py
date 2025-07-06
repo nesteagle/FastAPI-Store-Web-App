@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Sequence, Dict, Any
+from typing import Optional, Sequence
 
 from dotenv import load_dotenv
 from sqlmodel import Session, select

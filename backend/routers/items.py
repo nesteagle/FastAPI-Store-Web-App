@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
-from ..models import Item
-from ..database import get_db
-from ..auth import require_permissions
-from ..services.item_services import (
+from backend.models import Item
+from backend.database import get_db
+from backend.auth import require_permissions
+from backend.services.item_services import (
     get_items_service,
     get_item_service,
     create_item_service,
@@ -15,10 +15,8 @@ router = APIRouter(prefix="/items", tags=["items"])
 
 
 @router.get("/")
-async def get_items(
-    search: str = Query("", description="Search items by name"),
-    db: Session = Depends(get_db),
-):
+async def get_items(search: str = Query("", description="Search items by name"),
+    db: Session = Depends(get_db),):
     items = get_items_service(search, db)
     return {"items": items}
 

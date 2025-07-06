@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
-from ..models import User
-from ..database import get_db
-from ..auth import require_permissions
-from ..services.user_services import (
+from backend.models import User
+from backend.database import get_db
+from backend.auth import require_permissions
+from backend.services.user_services import (
     get_users_service,
     get_user_service,
     create_user_service,

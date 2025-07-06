@@ -1,8 +1,11 @@
+import urllib.parse
+
+from typing import List
 from sqlmodel import Session, select
 from fastapi import HTTPException
-from ..models import User, Item, Order, OrderItem
 from sqlalchemy.orm import selectinload
-import urllib.parse
+
+from backend.models import User, Item, Order, OrderItem, OrderItemCreate
 
 
 def encode_item_fields(item: Item) -> Item:
@@ -41,7 +44,7 @@ def try_get_order(order_id: int, db: Session) -> Order:
     return order
 
 
-def get_order_details(order: Order, db: Session):
+def get_order_details(order: Order):
     # requires order.order_items and OrderItem.item to be eager-loaded (already loaded in).
     items = []
     for oi in order.order_items:
@@ -63,11 +66,9 @@ def get_order_details(order: Order, db: Session):
     }
 
 
-def add_order_items(db: Session, order_id: int, order_items: list) -> None:
+def add_order_items(db: Session, order_id: int, order_items: List[OrderItemCreate]) -> None:
     for item in order_items:
         if item.quantity <= 0:
             raise ValueError("Quantity must be a positive integer")
-        db.add(
-            OrderItem(order_id=order_id, item_id=item.item_id, quantity=item.quantity)
-        )
+        db.add(OrderItem(order_id=order_id, item_id=item.item_id, quantity=item.quantity))
     db.commit()

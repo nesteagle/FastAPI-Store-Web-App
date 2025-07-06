@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
-from ..models import OrderCreate, User
-from ..database import get_db
-from ..auth import require_permissions, get_current_user
-from ..services.order_services import (
+from backend.models import OrderCreate, User
+from backend.database import get_db
+from backend.auth import require_permissions, get_current_user
+from backend.services.order_services import (
     get_user_orders_service,
     get_order_by_id_service,
     create_order_service,

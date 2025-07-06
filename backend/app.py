@@ -1,5 +1,6 @@
 import os
 import json
+from contextlib import asynccontextmanager
 
 from fastapi import (
     FastAPI,
@@ -11,17 +12,15 @@ from fastapi import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from contextlib import asynccontextmanager
+from pydantic import BaseModel
 from dotenv import load_dotenv
 import stripe
-
 from .database import create_db_and_tables, get_db_session
 from .routers import items, users, orders
 from .models import OrderItemCreate, User, OrderCreate
 from .auth import get_current_user
 from .services.order_services import create_order_service
 from .services.item_services import get_item_service
-from pydantic import BaseModel
 
 load_dotenv()
 
