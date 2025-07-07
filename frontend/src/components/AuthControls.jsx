@@ -103,11 +103,11 @@ export function ProfileMenu() {
                         </div>
                     </div>
                     <Link
-                        to="/settings"
-                        className="block w-full text-left px-3 py-2 rounded text-primary hover:bg-surface-muted transition"
+                        to="/account"
+                        className="block w-full text-left px-3 py-2 rounded text-text hover:bg-surface-muted transition"
                         onClick={() => setOpen(false)}
                     >
-                        Account Settings
+                        Order History
                     </Link>
                     <div className="mt-2">
                         <LogoutButton />

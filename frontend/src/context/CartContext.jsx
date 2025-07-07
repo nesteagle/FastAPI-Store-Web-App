@@ -23,6 +23,23 @@ export function CartProvider({ children }) {
         }
     }, [cart]);
 
+    // sets item to have quantity quantity
+    // requires quantity to be >=1
+    function changeCartItem(product, quantity) {
+        setCart((prevCart) => {
+            const existing = prevCart.find((item) => item.id === product.id);
+            if (existing) {
+                return prevCart.map((item) =>
+                    item.id === product.id
+                        ? { ...item, quantity:  quantity }
+                        : item
+                );
+            } else {
+                return [...prevCart, { ...product, quantity }];
+            }
+        });
+    }
+
     // adds item with quantity to cart, or adds quantity items to cart
     // requires quantity to be >=1
     function addCartItem(product, quantity) {
@@ -55,6 +72,7 @@ export function CartProvider({ children }) {
             value={{
                 cart,
                 addCartItem,
+                changeCartItem,
                 removeFromCart,
                 clearCart,
             }}

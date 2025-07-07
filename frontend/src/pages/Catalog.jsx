@@ -1,44 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react"
 import ProductGrid from "../components/ProductGrid";
-import { getItems } from "../api/itemsApi";
-
-export default function Catalog({ selectedCategory }) {
-    const [category, setCategory] = useState(selectedCategory || "all");
-    const [items, setItems] = useState([]);
-    const [search, setSearch] = useState("");
-    const categories = ["Featured"]; // Expand as needed
-
-    useEffect(() => {
-        async function fetchItems() {
-            try {
-                const data = await getItems();
-                setItems(data);
-            } catch (error) {
-                console.error("Failed to fetch items:", error);
-            }
-        }
-        fetchItems();
-    }, []);
-
-    const filteredProducts = useMemo(() => {
-        let filtered = items;
-        if (category !== "all") {
-            if (category.toLowerCase() === "featured") {
-                filtered = items.slice(0, 8);
-            } else {
-                filtered = items.filter(item => item.category === category);
-            }
-        }
-        if (search.trim()) {
-            const query = search.trim().toLowerCase();
-            filtered = filtered.filter(item =>
-                item.name.toLowerCase().includes(query) ||
-                (item.description && item.description.toLowerCase().includes(query))
-            );
-        }
-        return filtered;
-    }, [category, items, search]);
-
+import useProductFilters from "../hooks/useProducts"
+import useFetchList from "../hooks/useFetchList";
+export default function Catalog() {
+    const fetchFunction = useMemo(() => ({
+        endpoint: "/items/",
+        method: "GET"
+    }), []);
+    const { data, isLoading, error } = useFetchList(fetchFunction, "items", "items_cache");
+    const { category, setCategory, categories, search, setSearch, products } = useProductFilters(data);
     return (
         <main className="min-h-screen bg-bg transition-colors duration-200 pb-16">
             <section className="relative pt-12 pb-12 bg-gradient-to-r from-accent/5 via-bg to-accent/5">
@@ -95,7 +65,7 @@ export default function Catalog({ selectedCategory }) {
                             placeholder={`Search ${category.toLowerCase()} products...`}
                             className="w-full pl-12 pr-14 py-4 rounded-full border-2 border-accent/30 bg-white shadow-lg text-lg focus:outline-none focus:ring-2 focus:ring-accent/40 transition placeholder:text-accent/60"
                             aria-label="Search products"
-                        />                        
+                        />
                         {search && (
                             <button
                                 aria-label="Clear search"
@@ -110,8 +80,25 @@ export default function Catalog({ selectedCategory }) {
                 </div>
             </section>
             <section className="max-w-7xl mx-auto px-6">
-                {filteredProducts.length ? (
-                    <ProductGrid products={filteredProducts} />
+                {isLoading ? (
+                    <div className="flex flex-col items-center py-24">
+                        {/* Spinner icon or skeleton loader */}
+                        <svg className="w-12 h-12 animate-spin text-accent mb-4" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                        </svg>
+                        <p className="text-text-muted text-lg">Loading products...</p>
+                    </div>
+                ) : error ? (
+                    <div className="flex flex-col items-center py-24">
+                        <svg className="w-12 h-12 text-error mb-4" fill="none" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                            <path d="M12 8v4m0 4h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <p className="text-error text-lg">Failed to load products. Please try again later.</p>
+                    </div>
+                ) : products.length ? (
+                    <ProductGrid products={products} />
                 ) : (
                     <div className="flex flex-col items-center py-24">
                         {/* <svg className="w-16 h-16 bg-gray-100 mb-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">

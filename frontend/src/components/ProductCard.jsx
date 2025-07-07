@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useShoppingCart } from "../context/CartContext";
 import { useNotification } from "../context/NotificationContext";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, showAddToCart }) {
     const [imgError, setImgError] = useState(false);
     const validImageSrc = product.image_src && /^https?:\/\//.test(product.image_src);
     const { cart, addCartItem } = useShoppingCart();
@@ -26,12 +26,12 @@ export default function ProductCard({ product }) {
             )}
 
             <div className="flex-1 flex flex-col justify-between mb-4">
-                <h3 className="font-display text-lg font-bold text-primary mb-1 truncate">{product.name}</h3>
+                <h3 className="font-display text-lg font-bold text-text mb-1 truncate">{product.name}</h3>
                 <p className="text-accent font-extrabold text-xl">${product.price.toFixed(2)}</p>
             </div>
 
             <div className="flex flex-col gap-2 mt-auto">
-                <button
+                {showAddToCart && <button
                     className="bg-accent text-white font-semibold py-2 rounded-lg shadow hover:bg-accent-hover transition focus:outline-none focus:ring-2 focus:ring-accent/50"
                     onClick={() => {
                         addCartItem(product, 1);
@@ -39,10 +39,10 @@ export default function ProductCard({ product }) {
                     }}
                 >
                     Add to Cart
-                </button>
+                </button>}
                 <Link
                     to={`/products/${product.id}`}
-                    className="inline-block text-center bg-surface-muted text-primary font-semibold py-2 rounded-lg border border-surface-muted shadow-sm hover:bg-accent/10 hover:text-accent transition focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    className="inline-block text-center bg-surface-muted text-text font-semibold py-2 rounded-lg border border-surface-muted shadow-sm hover:bg-accent/10 hover:text-accent transition focus:outline-none focus:ring-2 focus:ring-accent/30"
                 >
                     View Product
                 </Link>
