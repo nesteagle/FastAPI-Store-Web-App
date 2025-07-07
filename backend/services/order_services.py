@@ -12,12 +12,12 @@ from ..routers.utils import (
 def get_user_orders_service(current_user: User, db: Session) -> List[Dict[str, Any]]:
     statement = select(Order).where(Order.user_id == current_user.id)
     orders = db.exec(statement).all()
-    return [get_order_details(order, db) for order in orders]
+    return [get_order_details(order) for order in orders]
 
 
 def get_order_by_id_service(order_id: int, db: Session) -> Dict[str, Any]:
     order = try_get_order(order_id, db)
-    return get_order_details(order, db)
+    return get_order_details(order)
 
 
 def create_order_service(order_data: OrderCreate, db: Session) -> Dict[str, Any]:
@@ -34,7 +34,7 @@ def create_order_service(order_data: OrderCreate, db: Session) -> Dict[str, Any]
     db.refresh(new_order)
     add_order_items(db, new_order.id, order_data.items)
     detailed_order = try_get_order(new_order.id, db)
-    return get_order_details(detailed_order, db)
+    return get_order_details(detailed_order)
 
 
 def update_order_service(
@@ -57,7 +57,7 @@ def update_order_service(
         db.rollback()
         raise e
     updated_order = try_get_order(order_id, db)
-    return get_order_details(updated_order, db)
+    return get_order_details(updated_order)
 
 
 def delete_order_service(order_id: int, db: Session) -> None:
