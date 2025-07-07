@@ -1,10 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import ThemeSlider from "./ThemeSlider";
+import LoadingIcon from "./LoadingIcon";
 
 export function AuthControls() {
-    const { isAuthenticated } = useAuth0();
+    const { isAuthenticated, isLoading } = useAuth0();
 
+    if (isLoading) {
+        return <LoadingIcon />;
+    }
     return (
         <div className="flex items-center gap-4">
             {isAuthenticated ? <ProfileMenu /> : <LoginButton />}
@@ -17,7 +22,7 @@ export function LoginButton() {
 
     return (
         <button
-            className="bg-accent text-white font-semibold px-4 py-2 rounded shadow hover:bg-accent-hover transition focus:outline-none focus:ring-2 focus:ring-accent/50"
+            className="bg-button text-text-white font-semibold px-4 py-2 rounded shadow hover:bg-button-hover transition focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
             onClick={() => { loginWithRedirect(); }}
         >
             Log In
@@ -41,14 +46,7 @@ export function Profile() {
     const { user, isAuthenticated, isLoading } = useAuth0();
 
     if (isLoading) {
-        return (
-            <div className="flex items-center gap-2 text-text-muted animate-pulse">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                </svg>
-                Loading...
-            </div>
-        );
+        return <LoadingIcon />;
     }
 
     return (
@@ -57,7 +55,7 @@ export function Profile() {
                 <img
                     src={user.picture}
                     alt={user.name}
-                    className="w-8 h-8 rounded-full border border-surface-muted shadow-sm"
+                    className="w-8 h-8 rounded-full border border-border-muted shadow-sm"
                 />
                 <span className="hidden sm:inline text-sm text-text-muted font-medium truncate max-w-[120px]">{user.email}</span>
             </div>
@@ -83,34 +81,42 @@ export function ProfileMenu() {
     return (
         <div className="relative" ref={menuRef}>
             <button
-                className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-accent/50"
+                className="flex items-center gap-2 transition-transform hover:scale-icon-medium"
                 onClick={() => setOpen((v) => !v)}
                 aria-label="Open profile menu"
             >
                 <img
                     src={user.picture}
                     alt={user.name}
-                    className="w-12 h-12 rounded-full border border-surface-muted shadow-sm"
+                    className="w-12 h-12 rounded-full border border-border-muted shadow-sm transition-transform"
                 />
             </button>
             {open && (
-                <div className="absolute right-0 mt-2 w-64 bg-surface rounded-xl shadow-lg border border-surface-muted z-50 p-4 animate-fade-in">
-                    <div className="flex items-center gap-3 mb-4">
+                <div className="absolute right-0 mt-2 w-64 bg-bg-secondary rounded-xl shadow-lg border border-border-muted p-4 animate-fade-in">
+                    <div className="flex items-center gap-3 mb-3">
                         <img src={user.picture} alt={user.name} className="w-10 h-10 rounded-full" />
                         <div className="min-w-0">
-                            <div className="font-semibold text-primary truncate">{user.name}</div>
+                            <div className="font-semibold text-text-primary truncate">{user.name}</div>
                             <div className="text-xs text-text-muted truncate max-w-[140px]">{user.email}</div>
                         </div>
                     </div>
-                    <Link
-                        to="/account"
-                        className="block w-full text-left px-3 py-2 rounded text-text hover:bg-surface-muted transition"
-                        onClick={() => setOpen(false)}
-                    >
-                        Order History
-                    </Link>
-                    <div className="mt-2">
-                        <LogoutButton />
+                    <div className="pt-1 flex flex-col items-center w-full space-y-1">
+                        <div className="flex items-center px-3 py-2 w-full">
+                            <span className="text-text-primary font-medium mr-6">
+                                Dark Mode
+                            </span>
+                            <ThemeSlider />
+                        </div>
+                        <Link
+                            to="/account"
+                            className="w-full text-left px-3 py-3 rounded text-text-primary hover:bg-bg-tertiary transition font-medium"
+                            onClick={() => setOpen(false)}
+                        >
+                            Order History
+                        </Link>
+                        <div className="w-full">
+                            <LogoutButton />
+                        </div>
                     </div>
                 </div>
             )}

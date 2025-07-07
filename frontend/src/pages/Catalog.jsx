@@ -7,14 +7,14 @@ export default function Catalog() {
         endpoint: "/items/",
         method: "GET"
     }), []);
-    const { data, isLoading, error } = useFetchList(fetchFunction, "items", "items_cache");
+    const { data, isDataLoading, error } = useFetchList(fetchFunction, "items", "items_cache");
     const { category, setCategory, categories, search, setSearch, products } = useProductFilters(data);
     return (
-        <main className="min-h-screen bg-bg transition-colors duration-200 pb-16">
+        <main className="min-h-screen bg-bg-primary transition-colors duration-200 pb-16">
             <section className="relative pt-12 pb-12 bg-gradient-to-r from-accent/5 via-bg to-accent/5">
                 <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl md:text-4xl font-display font-extrabold text-primary tracking-tight mb-2">
+                        <h1 className="text-3xl md:text-4xl font-display font-extrabold text-text-primary tracking-tight mb-2">
                             {category === "all" ? "All Products" : `${category} Products`}
                         </h1>
                         <p className="text-text-muted text-lg max-w-2xl">
@@ -25,8 +25,8 @@ export default function Catalog() {
                         <button
                             className={`px-4 py-2 rounded-full font-semibold transition
                                 ${category === "all"
-                                    ? "bg-accent text-white shadow"
-                                    : "bg-surface-muted text-primary hover:bg-accent hover:text-white"}`}
+                                    ? "bg-button text-text-white shadow"
+                                    : "bg-bg-tertiary text-text-primary hover:bg-button hover:text-text-white"}`}
                             onClick={() => setCategory("all")}
                         >
                             All
@@ -36,8 +36,8 @@ export default function Catalog() {
                                 key={cat}
                                 className={`px-4 py-2 rounded-full font-semibold transition
                                     ${category === cat
-                                        ? "bg-accent text-white shadow"
-                                        : "bg-surface-muted text-primary hover:bg-accent hover:text-white"}`}
+                                        ? "bg-button text-text-white shadow"
+                                        : "bg-bg-tertiary text-text-primary hover:bg-button hover:text-text-white"}`}
                                 onClick={() => setCategory(cat)}
                             >
                                 {cat}
@@ -47,10 +47,10 @@ export default function Catalog() {
                 </div>
                 {/* Section for search bar with subtle contrast */}
             </section>
-            <section className="w-full bg-white/80 backdrop-blur-sm shadow-md py-6 mb-6">
+            <section className="w-full bg-bg-secondary backdrop-blur-sm shadow-md py-6 mb-6">
                 <div className="max-w-7xl mx-auto px-6 flex justify-center">
                     <div className="relative w-full max-w-xl">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-accent">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-accent">
                             {/* Magnifying glass icon */}
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                 <circle cx="11" cy="11" r="8" />
@@ -63,13 +63,13 @@ export default function Catalog() {
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             placeholder={`Search ${category.toLowerCase()} products...`}
-                            className="w-full pl-12 pr-14 py-4 rounded-full border-2 border-accent/30 bg-white shadow-lg text-lg focus:outline-none focus:ring-2 focus:ring-accent/40 transition placeholder:text-accent/60"
+                            className="w-full pl-12 pr-14 py-4 rounded-full border-2 border-accent/30 bg-bg-tertiary shadow-lg text-lg focus:outline-none focus:ring-2 focus:ring-ring-accent/40 transition placeholder:text-text-accent/60"
                             aria-label="Search products"
                         />
                         {search && (
                             <button
                                 aria-label="Clear search"
-                                className="absolute top-2 right-4 flex items-center text-text-muted hover:text-accent text-4xl"
+                                className="absolute top-2 right-4 flex items-center text-text-muted hover:text-text-accent text-4xl"
                                 onClick={() => setSearch("")}
                             >
                                 &times;
@@ -80,10 +80,10 @@ export default function Catalog() {
                 </div>
             </section>
             <section className="max-w-7xl mx-auto px-6">
-                {isLoading ? (
+                {isDataLoading ? (
                     <div className="flex flex-col items-center py-24">
                         {/* Spinner icon or skeleton loader */}
-                        <svg className="w-12 h-12 animate-spin text-accent mb-4" fill="none" viewBox="0 0 24 24">
+                        <svg className="w-12 h-12 animate-spin text-text-accent mb-4" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                         </svg>

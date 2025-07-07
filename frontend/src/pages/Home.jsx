@@ -1,0 +1,76 @@
+// Home page, main entry point, featured products, categories, about store (identity)
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
+import ProductGrid from "../components/ProductGrid";
+import useFetchList from "../hooks/useFetchList";
+import useProductFilters from "../hooks/useProducts";
+
+export default function HomePage() {
+    const fetchFunction = useMemo(() => ({
+        endpoint: "/items/",
+        method: "GET"
+    }), []);
+    const { data } = useFetchList(fetchFunction, "items", "items_cache");
+    const { products } = useProductFilters(data);
+    return (
+        <main className="min-h-screen bg-bg-primary transition-colors duration-200 flex flex-col">
+            <section className="w-full bg-gradient-to-r from-accent/10 via-bg to-accent/10 py-20">
+                <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+                    <div className="flex-1">
+                        <h1 className="text-4xl md:text-5xl font-product-display font-extrabold mb-4 text-text-primary">
+                            Discover Quality. Shop with Confidence.
+                        </h1>
+                        <p className="text-lg text-text-muted mb-8 max-w-xl">
+                            Carefully selected products, effortless browsing, and secure checkout, all made simple.
+                        </p>
+                        <Link
+                            to="/catalog"
+                            className="inline-block bg-button text-text-white font-bold px-8 py-4 rounded-full shadow-xl text-lg hover:bg-button-hover transition"
+                        >
+                            Shop Bestsellers
+                        </Link>
+                    </div>
+                    <div className="flex-1 flex justify-center">
+                        <img
+                            src="https://images.pexels.com/photos/1405762/pexels-photo-1405762.jpeg"
+                            alt="Featured products"
+                            className="rounded-3xl shadow-lg w-full max-w-md object-cover"
+                            loading="lazy"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <section className="max-w-7xl mx-auto px-6 py-16">
+                <h2 className="text-3xl font-bold mb-8 text-center text-text-primary">
+                    Featured Products
+                </h2>
+                <ProductGrid products={products} showAddToCart={false} />
+                <div className="flex justify-center mt-8">
+                    <Link
+                        to="/catalog"
+                        className="text-text-accent font-semibold underline hover:text-button-hover transition-color"
+                    >
+                        View All Products
+                    </Link>
+                </div>
+            </section>
+
+
+            <section className="w-full bg-bg-tertiary py-16">
+                <div className="max-w-4xl mx-auto px-6 text-center">
+                    <h3 className="text-2xl font-bold mb-4 text-text-primary">Our Story</h3>
+                    <p className="text-lg text-text-muted mb-6">
+                        At nesteagle's amazing store, we believe in quality, transparency, and making shopping delightful. From our carefully selected products to our world-class support, we’re here to help you find your next favorite thing.
+                    </p>
+                    <Link
+                        to="/about"
+                        className="text-text-accent font-semibold underline hover:text-button-hover transition-color"
+                    >
+                        Learn More About Us
+                    </Link>
+                </div>
+            </section>
+        </main>
+    );
+}

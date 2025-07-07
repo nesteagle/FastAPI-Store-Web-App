@@ -1,27 +1,24 @@
 import { useState, useEffect } from "react";
 import { useAuthenticatedApi } from "./useApi";
 
-const CACHE_DURATION_MS = 15 * 60 * 1000; // 15 minutes
-
-export default function useFetchList(fetchFunction, dataKey, cacheKey) {
+export default function useFetchList(fetchFunction, dataKey, cacheKey, cacheDuration = 15 * 60 * 1000) {
     const { callApi } = useAuthenticatedApi();
     const [data, setData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isDataLoading, setIsDataLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
-            setIsLoading(true);
+            setIsDataLoading(true);
             setError(null);
 
-            // Check cache
             const cached = localStorage.getItem(cacheKey);
             const cacheTime = localStorage.getItem(`${cacheKey}_time`);
             const now = Date.now();
 
-            if (cached && cacheTime && now - Number(cacheTime) < CACHE_DURATION_MS) {
+            if (cached && cacheTime && now - Number(cacheTime) < cacheDuration) {
                 setData(JSON.parse(cached));
-                setIsLoading(false);
+                setIsDataLoading(false);
                 return;
             }
 
@@ -34,11 +31,11 @@ export default function useFetchList(fetchFunction, dataKey, cacheKey) {
             } catch (err) {
                 setError(err);
             } finally {
-                setIsLoading(false);
+                setIsDataLoading(false);
             }
         }
         fetchData();
     }, [callApi, fetchFunction, dataKey, cacheKey]);
 
-    return { data, isLoading, error };
+    return { data, isDataLoading, error };
 }

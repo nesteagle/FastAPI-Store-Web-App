@@ -11,11 +11,13 @@ import Footer from './components/Footer';
 import { CartProvider } from './context/CartContext.jsx';
 import { NotificationProvider } from './context/NotificationContext.jsx';
 
-import CheckoutButton from './pages/Checkout.jsx';
-
 import './index.css';
+import CheckoutPage from './pages/Checkout.jsx';
+import HomePage from './pages/Home.jsx';
+import { useInitTheme } from './hooks/useInitTheme.js';
 
 function App() {
+    useInitTheme();
     return (
         <BrowserRouter>
             <CartProvider>
@@ -29,7 +31,8 @@ function App() {
                         <Route path="/users" element={<Users />} />
                         <Route path="/orders" element={<Orders />} />
                         <Route path="/products/:id" element={<ProductPage />} />
-                        <Route path="/checkout" element={<CheckoutButton/>}/>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/checkout" element={<CheckoutPage/>}/>
                     </Routes>
                 </NotificationProvider>
             </CartProvider>

@@ -21,7 +21,7 @@ export default function ItemCreationForm() {
 
     return (
         <form
-            className="bg-surface p-6 rounded-lg shadow-md text-text"
+            className="bg-bg-secondary p-6 rounded-lg shadow-md text-text-primary"
             onSubmit={handleSubmit}
         >
             <h3 className="text-2xl font-semibold mb-4">Create New Item</h3>
@@ -70,7 +70,7 @@ export default function ItemCreationForm() {
             />
             <button
                 type="submit"
-                className="w-full py-2 bg-accent hover:bg-accent-hover text-white font-bold rounded"
+                className="w-full py-2 bg-button hover:bg-button-hover text-text-white font-bold rounded"
             >
                 Create Item
             </button>

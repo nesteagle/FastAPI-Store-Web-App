@@ -30,7 +30,7 @@ export default function Items() {
     }, []);
 
     return (
-        <section className="max-w-4xl mx-auto p-6 color-bg text-text-high">
+        <section className="max-w-4xl mx-auto p-6 color-bg text-text-primary-high">
             <h2 className="text-3xl font-bold mb-6">Items</h2>
             <div className="mb-10">
                 <ResourceSearch

@@ -8,7 +8,7 @@ export function CartActionsPopup({
         <div className="flex flex-col gap-3 mt-4">
             <div className="flex gap-2">
                 <button
-                    className="bg-error text-white px-3 py-2 rounded shadow font-semibold hover:bg-error-deep transition w-1/2"
+                    className="bg-error text-text-white px-3 py-2 rounded shadow font-semibold hover:bg-error-deep transition w-1/2"
                     onClick={onClearCart}
                 >
                     Clear Cart
@@ -16,7 +16,7 @@ export function CartActionsPopup({
 
                 <Link
                     to="/checkout"
-                    className="bg-accent text-white font-semibold px-3 py-2 rounded shadow hover:bg-accent-hover transition w-1/2 text-center"
+                    className="bg-button text-text-white font-semibold px-3 py-2 rounded shadow hover:bg-button-hover transition w-1/2 text-center"
                     onClick={onClose}
                 >
                     Checkout
@@ -24,7 +24,7 @@ export function CartActionsPopup({
             </div>
             <Link
                 to="/catalog"
-                className="block text-accent font-semibold hover:underline transition text-center mt-2"
+                className="block text-text-accent font-semibold hover:underline transition text-center mt-2"
                 onClick={onClose}
             >
                 Add More Items
@@ -48,9 +48,9 @@ export function CartActionsCheckout({
                 to="/catalog"
                 className="
           inline-flex items-center gap-2 px-6 py-3 rounded-full
-          bg-surface-muted text-accent font-semibold shadow-sm
-          hover:bg-accent hover:text-white focus:bg-accent focus:text-white
-          focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2
+          bg-bg-tertiary text-text-accent font-semibold shadow-sm
+          hover:bg-button hover:text-text-white focus:bg-button focus:text-text-white
+          focus:outline-none focus:ring-2 focus:ring-ring-accent/50 focus:ring-offset-2
           transition
           text-base
           group
@@ -58,7 +58,7 @@ export function CartActionsCheckout({
                 tabIndex={0}
             >
                 <svg
-                    className="w-5 h-5 text-accent group-hover:text-white group-focus:text-white transition"
+                    className="w-5 h-5 text-text-accent group-hover:text-text-white group-focus:text-text-white transition"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -75,7 +75,7 @@ export function CartActionsCheckout({
                 onClick={onClearCart}
                 className="
           inline-flex items-center gap-2 px-6 py-3 rounded-full
-          bg-error/90 text-white font-semibold shadow-sm
+          bg-error/90 text-text-white font-semibold shadow-sm
           hover:bg-error-deep focus:bg-error-deep
           focus:outline-none focus:ring-2 focus:ring-error/50 focus:ring-offset-2
           transition
@@ -83,7 +83,7 @@ export function CartActionsCheckout({
         "
             >
                 <svg
-                    className="w-5 h-5 text-white"
+                    className="w-5 h-5 text-text-white"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"

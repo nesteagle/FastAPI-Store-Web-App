@@ -34,13 +34,13 @@ export default function ResourceSearch({ resource, dataKey, columns }) {
     }, [query, callApi, resource, dataKey]);
 
     return (
-        <div className="max-w-3xl mx-auto p-6 bg-surface rounded-xl shadow transition-colors duration-200">
+        <div className="max-w-3xl mx-auto p-6 bg-bg-secondary rounded-xl shadow transition-colors duration-200">
             <input
                 type="text"
                 placeholder={`Search ${resource}...`}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full mb-4 px-4 py-2 rounded border border-surface-muted bg-surface-muted text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 transition"
+                className="w-full mb-4 px-4 py-2 rounded border border-border-muted bg-bg-tertiary text-text-primary focus:outline-none focus:ring-2 focus:ring-ring-accent/50 transition"
             />
             {isLoading && (
                 <div className="flex items-center gap-2 text-text-muted animate-pulse mb-4">

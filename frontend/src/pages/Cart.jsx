@@ -1,0 +1,1 @@
+// Lets users view, edit, or remove items before checkout.

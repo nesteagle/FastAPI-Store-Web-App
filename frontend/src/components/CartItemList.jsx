@@ -6,17 +6,17 @@ export default function CartItemList({
     variant = "popup", // "popup" or "checkout"
 }) {
     return (
-        <ul className={`divide-y divide-surface-muted mb-4 ${variant === "checkout" ? "max-h-[none]" : "max-h-64 overflow-y-auto"}`}>
+        <ul className={`divide-y divide-border-muted mb-4 ${variant === "checkout" ? "max-h-[none]" : "max-h-64 overflow-y-auto"}`}>
             {cart.map((item) => (
                 <li key={item.id} className={`flex items-center justify-between py-3 ${variant === "checkout" ? "py-6" : ""}`}>
                     <div className="flex items-center gap-3">
                         <img
                             src={item.image_src}
                             alt={item.name}
-                            className={`object-cover rounded border border-surface-muted bg-surface-muted ${variant === "checkout" ? "w-20 h-20" : "w-12 h-12"}`}
+                            className={`object-cover rounded border border-border-muted bg-bg-tertiary ${variant === "checkout" ? "w-20 h-20" : "w-12 h-12"}`}
                         />
                         <div>
-                            <span className="block font-medium text-text">{item.name}</span>
+                            <span className="block font-medium text-text-primary">{item.name}</span>
                             <span className="block text-xs text-text-muted">${item.price.toFixed(2)}</span>
                         </div>
                     </div>

@@ -1,39 +1,154 @@
-// Allows users to register, log in, and view their orders (can be combined with account management if needed).
-import { useMemo, useState, useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useAuthenticatedApi } from "../hooks/useApi";
-import ObjectViewTable from "../components/ObjectViewTable";
+import { useState, useMemo } from "react";
+import useFetchList from "../hooks/useFetchList";
 
 export default function AccountPage() {
-    const { isLoading, isAuthenticated } = useAuth0();
-    const { callApi } = useAuthenticatedApi();
-    const [orders, setOrders] = useState([]);
+    const fetchFunction = useMemo(() => ({
+        endpoint: "/orders/",
+        method: "GET"
+    }), []);
+    const { data, isDataLoading, error } = useFetchList(fetchFunction, "orders", "orders_cache", 3 * 60 * 1000);
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
-    const columns = useMemo(() => [
-        { key: 'id', label: 'UUID' },
-        { key: 'user_id', label: 'User ID' },
-        { key: 'date', label: 'Date' },
-        {
-            key: "items",
-            label: "Items",
-            render: (items) =>
-                items.map(i => `\"${i.name}\" x${i.quantity}`).join(", ")
-        }
-    ], []);
+    const orders = [...(data || [])].sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+    );
 
-    useEffect(() => {
-        async function fetchOrders() {
-            try {
-                const data = await callApi("/orders/");
-                setOrders(data.orders);
-            } catch (error) {
-                console.error("Failed to fetch orders:", error);
-            }
-        }
-        if (isAuthenticated && !isLoading) {
-            fetchOrders();
-        }
-    }, [isAuthenticated, isLoading, callApi]);
+    function formatDate(dateString) {
+        return new Date(dateString.concat("Z")).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            timeZoneName: 'short'
+        });
+    }
 
-    return (<ObjectViewTable data={orders} columns={columns}></ObjectViewTable>);
+    function truncate(str, max = 64) {
+        if (!str) return '';
+        return str.length > max ? str.slice(0, max - 1) + '…' : str;
+    }
+
+    if (!orders?.length) {
+        return (
+            <main className="max-w-2xl mx-auto py-20 px-4">
+                <div className="bg-bg-tertiary rounded p-10 text-center shadow">
+                    <span className="font-display text-2xl mb-2 block text-text-primary">No Orders Yet</span>
+                    <p className="text-text-muted">Your orders will appear here after your first purchase.</p>
+                </div>
+            </main>
+        );
+    }
+
+    return (
+        <div className="min-h-screen w-full bg-bg-primary">
+            <main className="max-w-3xl mx-auto py-10 px-4">
+                <h1 className="font-display text-3xl font-bold mb-8 text-text-primary text-center">Order History</h1>
+                <div className="space-y-8">
+                    {orders.map(order => (
+                        <div
+                            key={order.id}
+                            className="group bg-bg-secondary rounded shadow hover:scale-minimal hover:shadow-lg transition-transform duration-200 overflow-hidden"
+                            tabIndex={0}
+                            aria-label={`Order ${order.id} placed on ${formatDate(order.date)}`}
+                        >
+                            <div className="flex flex-col md:flex-row md:items-center justify-between p-6 gap-8">
+                                {/* Order Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="font-medium text-text-muted text-sm">
+                                            {formatDate(order.date)}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h2 className="font-display text-lg mb-2 text-text-primary truncate">
+                                            Order #{order.id.slice(-6).toUpperCase()}
+                                        </h2>
+                                        <ul className="space-y-2">
+                                            {order.items.map(item => (
+                                                <li key={item.id} className="flex items-center gap-4">
+                                                    <img
+                                                        src={item.image_src}
+                                                        alt={item.name}
+                                                        className="w-12 h-12 rounded object-cover border border-bg-tertiary shadow-sm"
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <span className="font-sans font-semibold text-base text-text-primary block truncate">{item.name}</span>
+                                                        <span className="text-xs text-text-muted" title={item.description}>{truncate(item.description)}</span>
+                                                    </div>
+                                                    <span className="text-sm text-text-muted">x{item.quantity}</span>
+                                                    <span className="text-base font-medium text-button">${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {/* Order Total */}
+                                <div className="flex flex-col items-end md:items-center md:justify-center min-w-120px">
+                                    <span className="text-button font-bold text-2xl mb-1">
+                                        ${order.items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0).toFixed(2)}
+                                    </span>
+                                    <button
+                                        className="mt-2 bg-button hover:bg-button-hover text-white px-4 py-2 rounded shadow transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-button"
+                                        aria-label={`View details for order ${order.id}`}
+                                        onClick={() => setSelectedOrder(order)}
+                                    >
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {/* Modal for order details */}
+                {selectedOrder && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+                        <div className="bg-bg-secondary rounded shadow max-w-lg w-full p-8 relative animate-fadeIn">
+                            <button
+                                className="absolute top-4 right-4 text-text-muted hover:text-button text-2xl focus:outline-none"
+                                onClick={() => setSelectedOrder(null)}
+                                aria-label="Close order details"
+                            >
+                                &times;
+                            </button>
+                            <h2 className="font-display text-2xl font-bold mb-2 text-text-primary text-center">Order Details</h2>
+                            <div className="text-center text-text-muted mb-4">
+                                Order #{selectedOrder.id.slice(-6).toUpperCase()} &bull; {formatDate(selectedOrder.date)}
+                            </div>
+                            <ul className="divide-y divide-bg-tertiary mb-4">
+                                {selectedOrder.items.map(item => (
+                                    <li key={item.id} className="flex items-center gap-4 py-3">
+                                        <img
+                                            src={item.image_src}
+                                            alt={item.name}
+                                            className="w-12 h-12 rounded object-cover border border-bg-tertiary shadow-sm"
+                                        />
+                                        <div className="flex-1 min-w-0">
+                                            <span className="font-sans font-semibold text-base text-text-primary block">{item.name}</span>
+                                            <span className="text-xs text-text-muted">{item.description}</span>
+                                        </div>
+                                        <span className="text-sm text-text-muted">x{item.quantity}</span>
+                                        <span className="text-base font-medium text-button">${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="font-medium text-text-muted">Total</span>
+                                <span className="text-button font-bold text-xl">
+                                    ${selectedOrder.items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0).toFixed(2)}
+                                </span>
+                            </div>
+                            <button
+                                className="w-full bg-button hover:bg-button-hover text-white px-4 py-2 rounded shadow transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-button"
+                                onClick={() => setSelectedOrder(null)}
+                                aria-label="Close order details"
+                            >
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </main>
+            </div>
+    );
 }
