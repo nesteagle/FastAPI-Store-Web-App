@@ -27,8 +27,9 @@ load_dotenv()
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 BASE_URL = os.getenv("BASE_URL")
+FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-if not STRIPE_SECRET_KEY or not STRIPE_WEBHOOK_SECRET or not BASE_URL:
+if not STRIPE_SECRET_KEY or not STRIPE_WEBHOOK_SECRET or not BASE_URL or not FRONTEND_URL:
     raise Exception("Missing required Stripe configuration.")
 
 stripe.api_key = STRIPE_SECRET_KEY
@@ -114,8 +115,8 @@ async def create_checkout_session(
             payment_method_types=["card"],
             line_items=line_items,
             mode="payment",
-            success_url=f"{BASE_URL}/success",
-            cancel_url=f"{BASE_URL}/cancel",
+            success_url=f"{FRONTEND_URL}/",
+            cancel_url=f"{FRONTEND_URL}/checkout",
             metadata={
                 "user_id": str(current_user.id),
                 "cart_items": cart_items,
