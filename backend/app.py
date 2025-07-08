@@ -29,7 +29,7 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 BASE_URL = os.getenv("BASE_URL")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-if not all[STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, BASE_URL, FRONTEND_URL]:
+if not all([STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, BASE_URL, FRONTEND_URL]):
     raise Exception("Missing required Stripe configuration.")
 
 stripe.api_key = STRIPE_SECRET_KEY

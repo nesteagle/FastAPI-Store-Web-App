@@ -13,7 +13,7 @@ async def get_all_orders(db: Session = Depends(get_db)):
     print("admin permission done")
     return {"orders": orders}
 
-@router.get("/users", dependencies=[Depends(require_permissions(["get:users"]))]) # get:users is an admin-level permission
+@router.get("/users/", dependencies=[Depends(require_permissions(["get:users"]))]) # get:users is an admin-level permission
 async def get_users(db: Session = Depends(get_db)):
     users = get_users_service(db)
     return {"users": users}
