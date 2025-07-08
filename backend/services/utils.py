@@ -62,6 +62,7 @@ def get_order_details(order: Order):
         "id": order.id,
         "date": order.date,
         "user_id": order.user_id,
+        "stripe_id": order.stripe_id,
         "items": items,
     }
 

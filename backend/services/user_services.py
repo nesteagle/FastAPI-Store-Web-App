@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from ..models import User
-from ..routers.utils import try_get_user
+from .utils import try_get_user
 
 def get_users_service(db: Session):
     statement = select(User)

@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 from ..models import Item
-from ..routers.utils import try_get_item, encode_item_fields
+from .utils import try_get_item, encode_item_fields
 
 def get_items_service(search: str, db: Session):
     statement = select(Item)

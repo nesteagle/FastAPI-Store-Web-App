@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 from sqlmodel import Session, select, delete
 from ..models import Order, OrderCreate, OrderItem, User
-from ..routers.utils import (
+from .utils import (
     try_get_user,
     try_get_order,
     get_order_details,

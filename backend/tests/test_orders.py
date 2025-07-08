@@ -1,108 +1,71 @@
-# from .helpers import (
-#     create_test_item,
-#     create_test_user,
-#     create_test_order,
-#     build_order_data,
-# )
+"""
+Unit tests for order-related service functions.
+This module contains tests for the following order service operations:
+- Creating an order
+- Retrieving all orders for a user
+- Retrieving an order by ID
+
+Each test uses a database session fixture and helper functions to create test users, items, and orders.
+"""
+
+import pytest
+from backend.services.order_services import (
+    get_user_orders_service,
+    get_order_by_id_service,
+    create_order_service,
+)
+from backend.models import OrderCreate, OrderItemCreate
+from .helpers import create_test_user, create_test_item, create_test_order
 
 
-# def assert_order(order, expected_items, expected_user_id):
-#     assert "items" in order
-#     assert order["user_id"] == expected_user_id
-#     for oi in order["items"]:
-#         expected = expected_items[oi["item_id"]]
-#         assert oi["quantity"] == expected["quantity"]
-#         assert oi["name"] == expected["name"]
-#         assert oi["description"] == expected["description"]
-#         assert oi["price"] == expected["price"]
+def test_create_order_service(db_session):
+    """Test creating an order"""
+    user = create_test_user(db_session, "John")
+    item1 = create_test_item(db_session, "Apple", 2.99, "Fresh apple")
+    item2 = create_test_item(db_session, "Banana", 1.99, "Yellow banana")
+
+    order_items = [
+        OrderItemCreate(item_id=item1.id, quantity=3),
+        OrderItemCreate(item_id=item2.id, quantity=2),
+    ]
+
+    order_data = OrderCreate(
+        user_id=user.id,
+        items=order_items,
+        stripe_id="test_stripe_123",
+        currency="usd",
+        amount=12.95 * 100,  # 3*299 + 2*199 CENTS
+        email="john@example.com",
+    )
+
+    created_order = create_order_service(order_data, db_session)
+
+    assert created_order["user_id"] == user.id
+    assert len(created_order["items"]) == 2
+    assert created_order["stripe_id"] == "test_stripe_123"
 
 
-# def build_expected_items(*item_quantity_tuples):
-#     expected = {}
-#     for item, quantity in item_quantity_tuples:
-#         expected[item["id"]] = {**item, "quantity": quantity}
-#     return expected
+def test_get_user_orders_service(db_session):
+    """Test getting user orders"""
+    user = create_test_user(db_session, "Jane")
+    item = create_test_item(db_session, "Orange", 3.99, "Citrus fruit")
+
+    create_test_order(db_session, user.id, (item, 2))
+
+    orders = get_user_orders_service(user, db_session)
+
+    assert len(orders) == 1
+    assert orders[0]["user_id"] == user.id
 
 
-# def test_get_orders(client):
-#     response = client.get("/orders/")
-#     assert response.status_code == 200
-#     assert "orders" in response.json()
+def test_get_order_by_id_service(db_session):
+    """Test getting an order by ID"""
+    user = create_test_user(db_session, "Bob")
+    item = create_test_item(db_session, "Grape", 5.99, "Purple grapes")
 
+    created_order = create_test_order(db_session, user.id, (item, 1))
 
-# def test_create_order(client):
-#     user = create_test_user(client, username="John")
-#     user_id = user["id"]
+    retrieved_order = get_order_by_id_service(created_order["id"], db_session)
 
-#     item_1 = create_test_item(client, name="Apple", description="an apple", price=2.99)
-#     item_2 = create_test_item(client, name="Banana", description="BANANA!", price=0.99)
-
-#     item_1_quantity = 4
-#     item_2_quantity = 2
-
-#     expected_items = build_expected_items(
-#         (item_1, item_1_quantity), (item_2, item_2_quantity)
-#     )
-#     assert_order(
-#         create_test_order(
-#             client, user_id, (item_1, item_1_quantity), (item_2, item_2_quantity)
-#         ),
-#         expected_items,
-#         user_id,
-#     )
-
-
-# def test_put_order(client):
-#     user = create_test_user(client, username="Robin")
-#     user_id = user["id"]
-
-#     original_item_1 = create_test_item(client, name="Metronome", price=15.99)
-#     order_id = create_test_order(client, user_id, (original_item_1, 2))["id"]
-
-#     item_1 = create_test_item(
-#         client, name="Kiwi", description="Premium kiwi with great taste", price=5.99
-#     )
-#     item_2 = create_test_item(client, name="Mango", description="fruit.", price=4.50)
-#     item_3 = create_test_item(client, name="Olives", price=3.00)
-
-#     item_1_quantity = 6
-#     item_2_quantity = 3
-#     item_3_quantity = 5
-
-#     data = build_order_data(
-#         user_id,
-#         (item_1, item_1_quantity),
-#         (item_2, item_2_quantity),
-#         (item_3, item_3_quantity),
-#     )
-
-#     response = client.put(f"/orders/{order_id}", json=data)
-#     assert response.status_code == 200
-
-#     expected_items = build_expected_items(
-#         (item_1, item_1_quantity), (item_2, item_2_quantity), (item_3, item_3_quantity)
-#     )
-#     assert_order(response.json()["order"], expected_items, user_id)
-
-
-# def test_delete_order(client):
-#     user = create_test_user(client, username="Aaron")
-#     user_id = user["id"]
-
-#     item_1 = create_test_item(
-#         client, name="Grapes", description=None, price=5.99
-#     )
-#     item_1_quantity = 10
-#     data = build_order_data(
-#         user_id,
-#         (item_1, item_1_quantity)
-#     )
-#     order_id = create_test_order(client, user_id, (item_1, item_1_quantity))["id"]
-#     response = client.delete(f"/orders/{order_id}")
-#     assert response.status_code == 200
-#     assert response.json()["message"] == f"Order {order_id} deleted successfully"
-
-#     get_response = client.get(f"/orders/{order_id}")
-#     assert get_response.status_code == 404
-#     assert get_response.json()["detail"] == "Resource not found"
-    
+    assert retrieved_order["id"] == created_order["id"]
+    assert retrieved_order["user_id"] == user.id
