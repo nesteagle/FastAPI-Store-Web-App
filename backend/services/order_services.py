@@ -65,3 +65,8 @@ def delete_order_service(order_id: int, db: Session) -> None:
     db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))
     db.delete(order)
     db.commit()
+
+
+def get_orders_admin_service(db: Session) -> List[Dict[str, Any]]:
+    orders = db.exec(select(Order)).all()
+    return [get_order_details(order) for order in orders]

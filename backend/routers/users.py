@@ -14,7 +14,7 @@ from backend.services.user_services import (
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/", dependencies=[Depends(require_permissions(["get:users"]))])
+@router.get("/", dependencies=[Depends(require_permissions(["get:users"]))]) # get:users is an admin-level permission
 async def get_users(db: Session = Depends(get_db)):
     users = get_users_service(db)
     return {"users": users}

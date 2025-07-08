@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import stripe
 from .database import create_db_and_tables, get_db_session
-from .routers import items, users, orders
+from .routers import items, users, orders, admin
 from .models import OrderItemCreate, User, OrderCreate
 from .auth import get_current_user
 from .services.order_services import create_order_service
@@ -29,7 +29,7 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 BASE_URL = os.getenv("BASE_URL")
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-if not STRIPE_SECRET_KEY or not STRIPE_WEBHOOK_SECRET or not BASE_URL or not FRONTEND_URL:
+if not all[STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, BASE_URL, FRONTEND_URL]:
     raise Exception("Missing required Stripe configuration.")
 
 stripe.api_key = STRIPE_SECRET_KEY
@@ -59,6 +59,7 @@ app.add_middleware(
 app.include_router(items.router)
 app.include_router(users.router)
 app.include_router(orders.router)
+app.include_router(admin.router)
 
 
 class CartItem(BaseModel):
@@ -149,7 +150,10 @@ async def stripe_webhook(
         session = event["data"]["object"]
         user_id = session["metadata"]["user_id"]
         cart = session["metadata"]["cart_items"]
-        items = [OrderItemCreate(item_id=item["id"], quantity=item["qty"]) for item in json.loads(cart)]
+        items = [
+            OrderItemCreate(item_id=item["id"], quantity=item["qty"])
+            for item in json.loads(cart)
+        ]
         order_data = OrderCreate(
             user_id=user_id,
             items=items,
