@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import ResourceSearch from "../components/ResourceSearch";
+import AdminViewTable from "../components/AdminViewTable";
+import { AdminLinkNavigation } from "../components/AdminLinkNavigation";
 
 export default function Orders() {
     const columns = useMemo(() => [
@@ -16,8 +17,9 @@ export default function Orders() {
 
     return (
         <div>
-            <h2>Orders</h2>
-            <ResourceSearch resource="orders" dataKey="orders" columns={columns} />
+            <h1 className="font-display text-2xl md:text-3xl font-bold text-text-primary mb-6 tracking-tight">Orders</h1>
+            <AdminViewTable endpoint="/admin/orders/" columns={columns} dataKey="orders" />
+            <AdminLinkNavigation/>
         </div>
     );
 }

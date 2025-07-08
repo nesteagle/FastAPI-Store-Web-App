@@ -8,7 +8,7 @@ export function CartActionsPopup({
         <div className="flex flex-col gap-3 mt-4">
             <div className="flex gap-2">
                 <button
-                    className="bg-error text-text-white px-3 py-2 rounded shadow font-semibold hover:bg-error-deep transition w-1/2"
+                    className="text-text-white px-4 py-2 rounded shadow font-semibold clear-btn-transition w-1/2"
                     onClick={onClearCart}
                 >
                     Clear Cart
@@ -16,7 +16,7 @@ export function CartActionsPopup({
 
                 <Link
                     to="/checkout"
-                    className="bg-button text-text-white font-semibold px-3 py-2 rounded shadow hover:bg-button-hover transition w-1/2 text-center"
+                    className=" text-text-white font-semibold px-4 py-2 rounded shadow btn-transition w-1/2 text-center"
                     onClick={onClose}
                 >
                     Checkout
@@ -24,7 +24,7 @@ export function CartActionsPopup({
             </div>
             <Link
                 to="/catalog"
-                className="block text-text-accent font-semibold hover:underline transition text-center mt-2"
+                className="link-primary"
                 onClick={onClose}
             >
                 Add More Items
@@ -46,15 +46,7 @@ export function CartActionsCheckout({
             {/* Add More Items Button */}
             <Link
                 to="/catalog"
-                className="
-          inline-flex items-center gap-2 px-6 py-3 rounded-full
-          bg-bg-tertiary text-text-accent font-semibold shadow-sm
-          hover:bg-button hover:text-text-white focus:bg-button focus:text-text-white
-          focus:outline-none focus:ring-2 focus:ring-ring-accent/50 focus:ring-offset-2
-          transition
-          text-base
-          group
-        "
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-bg-tertiary text-text-accent font-semibold shadow-sm hover:bg-button hover:text-text-white focus:bg-button focus:text-text-white focus:outline-none focus:ring-2 focus:ring-ring-accent/50 focus:ring-offset-2 transition text-base group"
                 tabIndex={0}
             >
                 <svg
@@ -73,14 +65,7 @@ export function CartActionsCheckout({
             <button
                 type="button"
                 onClick={onClearCart}
-                className="
-          inline-flex items-center gap-2 px-6 py-3 rounded-full
-          bg-error/90 text-text-white font-semibold shadow-sm
-          hover:bg-error-deep focus:bg-error-deep
-          focus:outline-none focus:ring-2 focus:ring-error/50 focus:ring-offset-2
-          transition
-          text-base
-        "
+                className="inline-flex items-center gap-2 px-6 py-3 clear-btn-transition rounded-full"
             >
                 <svg
                     className="w-5 h-5 text-text-white"

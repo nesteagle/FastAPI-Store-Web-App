@@ -1,4 +1,3 @@
-// Home page, main entry point, featured products, categories, about store (identity)
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import ProductGrid from "../components/ProductGrid";
@@ -25,7 +24,7 @@ export default function HomePage() {
                         </p>
                         <Link
                             to="/catalog"
-                            className="inline-block bg-button text-text-white font-bold px-8 py-4 rounded-full shadow-xl text-lg hover:bg-button-hover transition"
+                            className="btn-primary btn-transition"
                         >
                             Shop Bestsellers
                         </Link>
@@ -49,7 +48,7 @@ export default function HomePage() {
                 <div className="flex justify-center mt-8">
                     <Link
                         to="/catalog"
-                        className="text-text-accent font-semibold underline hover:text-button-hover transition-color"
+                        className="link-primary"
                     >
                         View All Products
                     </Link>
@@ -65,7 +64,7 @@ export default function HomePage() {
                     </p>
                     <Link
                         to="/about"
-                        className="text-text-accent font-semibold underline hover:text-button-hover transition-color"
+                        className="link-primary"
                     >
                         Learn More About Us
                     </Link>

@@ -1,4 +1,5 @@
 import FormField from "./FormField";
+
 export default function CartItemList({
     cart,
     changeCartItem,
@@ -36,7 +37,7 @@ export default function CartItemList({
                             }}
                         />
                         <button
-                            className="w-full text-left px-2 py-1.5 rounded text-error hover:bg-error/10 transition"
+                            className="w-full text-left px-2 py-1.5 rounded warning-btn-transition"
                             onClick={() => removeFromCart(item.id)}
                             aria-label={`Remove ${item.name} from cart`}
                         >

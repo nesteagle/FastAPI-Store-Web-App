@@ -1,7 +1,7 @@
-import FormField from "./FormField";
-import { useAuthenticatedApi } from "../hooks/useApi";
+import FormField from "../../components/FormField";
+import { useAuthenticatedApi } from "../../hooks/useApi";
 import { useMemo } from "react";
-import useCreationForm from "../hooks/useCreationForm";
+import useCreationForm from "../../hooks/useCreationForm";
 
 export default function ItemCreationForm() {
     const { callApi } = useAuthenticatedApi();
@@ -43,7 +43,7 @@ export default function ItemCreationForm() {
                 step="0.01"
                 min="0.01"
                 value={formData.price}
-                onChange={handleChange} 
+                onChange={handleChange}
                 width="w-full"
 
             />
@@ -53,7 +53,7 @@ export default function ItemCreationForm() {
                 type="text"
                 name="description"
                 value={formData.description}
-                onChange={handleChange} 
+                onChange={handleChange}
                 width="w-full"
 
             />
@@ -64,7 +64,7 @@ export default function ItemCreationForm() {
                 name="image_src"
                 required
                 value={formData.image_src}
-                onChange={handleChange} 
+                onChange={handleChange}
                 width="w-full"
 
             />

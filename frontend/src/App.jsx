@@ -1,20 +1,27 @@
+import React from 'react';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Items from './pages/Items';
-import Users from './pages/Users';
-import Orders from './pages/Orders';
-import Catalog from './pages/Catalog';
-import Callback from './pages/Callback';
-import AccountPage from './pages/Account.jsx';
-import ProductPage from './pages/Product.jsx';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { CartProvider } from './context/CartContext.jsx';
-import { NotificationProvider } from './context/NotificationContext.jsx';
 
 import './index.css';
-import CheckoutPage from './pages/Checkout.jsx';
-import HomePage from './pages/Home.jsx';
-import { useInitTheme } from './hooks/useInitTheme.js';
+
+import { useInitTheme } from './hooks/useInitTheme';
+
+import { CartProvider } from './context/CartContext';
+import { NotificationProvider } from './context/NotificationContext';
+
+import Header from './components/Header';
+import Footer from './components/Footer';
+
+import HomePage from './pages/Home';
+import Catalog from './pages/Catalog';
+import Callback from './pages/Callback';
+import AccountPage from './pages/Account';
+import ProductPage from './pages/Product';
+import CheckoutPage from './pages/Checkout';
+
+import Items from './admin/pages/Items';
+import Users from './admin/pages/Users';
+import Orders from './admin/pages/Orders';
 
 function App() {
     useInitTheme();
@@ -24,15 +31,17 @@ function App() {
                 <NotificationProvider>
                     <Header />
                     <Routes>
+                        {/* User routes */}
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/account" element={<AccountPage />} />
                         <Route path="/callback" element={<Callback />} />
-                        <Route path="/items" element={<Items />} />
+                        <Route path="/checkout" element={<CheckoutPage />} />
                         <Route path="/catalog" element={<Catalog />} />
-                        <Route path="/account" element = {<AccountPage/>}/>
-                        <Route path="/users" element={<Users />} />
-                        <Route path="/orders" element={<Orders />} />
                         <Route path="/products/:id" element={<ProductPage />} />
-                        <Route path="/" element={<HomePage/>}/>
-                        <Route path="/checkout" element={<CheckoutPage/>}/>
+                        {/* Admin routes */}
+                        <Route path="/admin/items" element={<Items />} />
+                        <Route path="/admin/users" element={<Users />} />
+                        <Route path="/admin/orders" element={<Orders />} />
                     </Routes>
                 </NotificationProvider>
             </CartProvider>

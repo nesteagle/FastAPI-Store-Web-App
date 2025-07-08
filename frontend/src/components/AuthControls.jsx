@@ -22,7 +22,7 @@ export function LoginButton() {
 
     return (
         <button
-            className="bg-button text-text-white font-semibold px-4 py-2 rounded shadow hover:bg-button-hover transition focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
+            className="btn-transition text-text-white font-semibold px-4 py-2 rounded shadow focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
             onClick={() => { loginWithRedirect(); }}
         >
             Log In
@@ -34,8 +34,11 @@ export function LogoutButton() {
     const { logout } = useAuth0();
     return (
         <button
-            className="mt-2 w-full text-left px-3 py-2 rounded text-error hover:bg-error/10 transition"
-            onClick={() => { logout({ logoutParams: { returnTo: window.location.origin } }); }}
+            className="mt-2 w-full text-left px-4 py-2 rounded warning-btn-transition"
+            onClick={() => {
+                localStorage.clear();
+                logout({ logoutParams: { returnTo: window.location.origin } });
+            }}
         >
             Log Out
         </button>
@@ -81,7 +84,7 @@ export function ProfileMenu() {
     return (
         <div className="relative" ref={menuRef}>
             <button
-                className="flex items-center gap-2 transition-transform hover:scale-icon-medium"
+                className="flex items-center gap-2 transition-transform hover:scale-icon-medium cursor-pointer"
                 onClick={() => setOpen((v) => !v)}
                 aria-label="Open profile menu"
             >
@@ -109,7 +112,7 @@ export function ProfileMenu() {
                         </div>
                         <Link
                             to="/account"
-                            className="w-full text-left px-3 py-3 rounded text-text-primary hover:bg-bg-tertiary transition font-medium"
+                            className="w-full text-left px-3 py-2 rounded text-text-primary hover:bg-bg-tertiary transition font-medium"
                             onClick={() => setOpen(false)}
                         >
                             Order History

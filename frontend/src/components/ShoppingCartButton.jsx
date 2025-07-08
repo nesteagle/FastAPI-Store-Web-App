@@ -20,7 +20,7 @@ export default function ShoppingCartButton() {
     return (
         <div className="relative" ref={buttonRef}>
             <button
-                className="relative flex items-center justify-center w-10 h-10 rounded-full bg-bg-tertiary hover:bg-button/10 transition hover:scale-icon-medium duration-200 focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
+                className="cursor-pointer relative flex items-center justify-center w-10 h-10 rounded-full bg-bg-tertiary hover:bg-button/10 transition hover:scale-icon-medium duration-200 focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
                 onClick={() => setOpen((v) => !v)}
                 aria-label="Open shopping cart"
             >

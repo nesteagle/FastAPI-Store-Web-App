@@ -6,7 +6,7 @@ import { useNotification } from "../context/NotificationContext";
 export default function ProductCard({ product, showAddToCart }) {
     const [imgError, setImgError] = useState(false);
     const validImageSrc = product.image_src && /^https?:\/\//.test(product.image_src);
-    const { cart, addCartItem } = useShoppingCart();
+    const { addCartItem } = useShoppingCart();
     const { showToast } = useNotification();
     return (
         <div className="group bg-bg-secondary rounded-2xl shadow-lg flex flex-col items-stretch p-5 border border-border-muted transition-all duration-200 hover:shadow-2xl hover:border-accent/70 relative overflow-hidden">
@@ -31,18 +31,19 @@ export default function ProductCard({ product, showAddToCart }) {
             </div>
 
             <div className="flex flex-col gap-2 mt-auto">
-                {showAddToCart && <button
-                    className="bg-button text-text-white font-semibold py-2 rounded-lg shadow hover:bg-button-hover transition focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
-                    onClick={() => {
-                        addCartItem(product, 1);
-                        showToast("Item added to cart!", "success");
-                    }}
-                >
-                    Add to Cart
-                </button>}
+                {showAddToCart &&
+                    <button
+                        className="btn-transition text-text-white font-semibold py-2 rounded-lg shadow  focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
+                        onClick={() => {
+                            addCartItem(product, 1);
+                            showToast("Item added to cart!", "success");
+                        }}
+                    >
+                        Add to Cart
+                    </button>}
                 <Link
                     to={`/products/${product.id}`}
-                    className="inline-block text-center bg-bg-tertiary text-text-primary font-semibold py-2 rounded-lg border border-border-muted shadow-sm hover:bg-button/10 hover:text-text-accent transition focus:outline-none focus:ring-2 focus:ring-ring-accent/30"
+                    className="inline-block gray-btn-transition py-2"
                 >
                     View Product
                 </Link>
