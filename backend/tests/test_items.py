@@ -1,13 +1,6 @@
 """
-Unit tests for item-related service functions.
-This module contains tests for the following item service operations:
-- Retrieving all items (with and without search)
-- Creating an item
-- Retrieving an item by ID
-- Updating an item
-- Deleting an item
-
-Each test uses a database session fixture and helper functions to create test items.
+Unit tests for item service functions.
+Tests CRUD operations and search functionality using database fixtures.
 """
 
 import pytest
@@ -23,7 +16,7 @@ from .helpers import create_test_item
 
 
 def test_get_items_service(db_session):
-    """Test getting all items"""
+    """Test getting all items."""
     create_test_item(db_session, "Apple", 2.99, "Fresh apple")
     create_test_item(db_session, "Banana", 1.99, "Yellow banana")
 
@@ -32,7 +25,7 @@ def test_get_items_service(db_session):
 
 
 def test_get_items_service_with_search(db_session):
-    """Test getting items with search"""
+    """Test getting items with search filter."""
     create_test_item(db_session, "Apple", 2.99, "Fresh apple")
     create_test_item(db_session, "Banana", 1.99, "Yellow banana")
 
@@ -42,7 +35,7 @@ def test_get_items_service_with_search(db_session):
 
 
 def test_create_item_service(db_session):
-    """Test creating an item"""
+    """Test creating an item."""
     item = Item(name="Orange", description="Citrus fruit", price=3.99)
     created_item = create_item_service(item, db_session)
 
@@ -53,7 +46,7 @@ def test_create_item_service(db_session):
 
 
 def test_get_item_service(db_session):
-    """Test getting a single item"""
+    """Test getting a single item by ID."""
     created_item = create_test_item(db_session, "Grape", 5.99, "Purple grapes")
 
     retrieved_item = get_item_service(created_item.id, db_session)
@@ -62,7 +55,7 @@ def test_get_item_service(db_session):
 
 
 def test_update_item_service(db_session):
-    """Test updating an item"""
+    """Test updating an item."""
     created_item = create_test_item(db_session, "Pear", 4.99, "Green pear")
 
     updated_data = Item(name="Red Pear", description="Red pear", price=5.99)
@@ -74,11 +67,11 @@ def test_update_item_service(db_session):
 
 
 def test_delete_item_service(db_session):
-    """Test deleting an item"""
+    """Test deleting an item."""
     created_item = create_test_item(db_session, "Mango", 6.99, "Tropical fruit")
 
     deleted_item = delete_item_service(created_item.id, db_session)
     assert deleted_item.id == created_item.id
 
-    with pytest.raises(Exception):  # Not found anymore
+    with pytest.raises(Exception):  # Expected item not found
         get_item_service(created_item.id, db_session)

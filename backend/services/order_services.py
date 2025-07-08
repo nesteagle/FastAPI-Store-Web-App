@@ -1,3 +1,8 @@
+"""
+Service functions for order management operations.
+Handles CRUD operations for Order entities with item relationships and user validation.
+"""
+
 from typing import List, Dict, Any
 from sqlmodel import Session, select, delete
 from ..models import Order, OrderCreate, OrderItem, User
@@ -10,17 +15,20 @@ from .utils import (
 
 
 def get_user_orders_service(current_user: User, db: Session) -> List[Dict[str, Any]]:
+    """Retrieve all orders for a specific user."""
     statement = select(Order).where(Order.user_id == current_user.id)
     orders = db.exec(statement).all()
     return [get_order_details(order) for order in orders]
 
 
 def get_order_by_id_service(order_id: int, db: Session) -> Dict[str, Any]:
+    """Retrieve a single order by ID with detailed item information."""
     order = try_get_order(order_id, db)
     return get_order_details(order)
 
 
 def create_order_service(order_data: OrderCreate, db: Session) -> Dict[str, Any]:
+    """Create a new order with associated items."""
     try_get_user(order_data.user_id, db)
     new_order = Order(
         user_id=order_data.user_id,
@@ -40,6 +48,7 @@ def create_order_service(order_data: OrderCreate, db: Session) -> Dict[str, Any]
 def update_order_service(
     order_id: int, order_data: OrderCreate, db: Session
 ) -> Dict[str, Any]:
+    """Update an existing order and replace its items."""
     existing_order = try_get_order(order_id, db)
     try_get_user(order_data.user_id, db)
     existing_order.user_id = order_data.user_id
@@ -51,7 +60,6 @@ def update_order_service(
         db.commit()
         db.refresh(existing_order)
         db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))
-        # Optionally commit here if needed, or let add_order_items handle it.
         add_order_items(db, existing_order.id, order_data.items)
     except Exception as e:
         db.rollback()
@@ -61,6 +69,7 @@ def update_order_service(
 
 
 def delete_order_service(order_id: int, db: Session) -> None:
+    """Delete an order and all associated order items."""
     order = try_get_order(order_id, db)
     db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))
     db.delete(order)
@@ -68,5 +77,6 @@ def delete_order_service(order_id: int, db: Session) -> None:
 
 
 def get_orders_admin_service(db: Session) -> List[Dict[str, Any]]:
+    """Retrieve all orders for admin dashboard view."""
     orders = db.exec(select(Order)).all()
     return [get_order_details(order) for order in orders]

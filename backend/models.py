@@ -1,14 +1,23 @@
-from pydantic import BaseModel
-from sqlmodel import SQLModel, Field, Relationship
+"""
+This module defines the backend's data models using SQLModel and Pydantic.
+It includes models for items, users, orders, and order items, as well as Pydantic schemas for order creation.
+Relationships between entities are established for ORM operations.
+"""
+
 import uuid
 from datetime import datetime, UTC
 
+from pydantic import BaseModel
+from sqlmodel import SQLModel, Field, Relationship
+
 
 def utc_now():
+    """Return current UTC timestamp."""
     return datetime.now(UTC)
 
 
 class Item(SQLModel, table=True):
+    """Product item model with name, price, and optional image."""
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, max_length=100)
     description: str | None = Field(default=None, max_length=500)
@@ -18,6 +27,7 @@ class Item(SQLModel, table=True):
 
 
 class User(SQLModel, table=True):
+    """User model with Auth0 integration and order history."""
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     auth0_sub: str = Field(index=True, unique=True)
     email: str = Field(index=True)
@@ -25,18 +35,20 @@ class User(SQLModel, table=True):
 
 
 class Order(SQLModel, table=True):
+    """Order model tracking purchases with Stripe id integration.  Amount is in cents."""
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     date: datetime = Field(default_factory=utc_now, index=True)
     stripe_id: str = Field(default=None, index=True)
     currency: str | None = Field(default="USD")
-    amount: int = Field(default=None) # amount in cents
+    amount: int = Field(default=None)
     user_id: str = Field(foreign_key="user.id", index=True)
     user: User = Relationship(back_populates="orders")
-    order_items: list["OrderItem"] = Relationship(back_populates="order")
+    order_items: list["OrderItem"] = Relationship(back_populates="order_items")
     email: str = Field(default=None, index=True)
 
 
 class OrderItem(SQLModel, table=True):
+    """Links orders to items with quantity."""
     id: int | None = Field(default=None, primary_key=True)
     order_id: str = Field(foreign_key="order.id", index=True)
     order: Order = Relationship(back_populates="order_items")
@@ -46,14 +58,16 @@ class OrderItem(SQLModel, table=True):
 
 
 class OrderItemCreate(BaseModel):
+    """Schema for creating order items with item ID and quantity."""
     item_id: int
     quantity: int = 1
 
 
 class OrderCreate(BaseModel):
+    """Schema for creating orders with items and Stripe payment details. Amount is in cents."""
     user_id: str
     items: list[OrderItemCreate]
     stripe_id: str
     currency: str | None = None
-    amount: int  # amount in cents
+    amount: int
     email: str

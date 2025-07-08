@@ -1,11 +1,6 @@
 """
-Unit tests for order-related service functions.
-This module contains tests for the following order service operations:
-- Creating an order
-- Retrieving all orders for a user
-- Retrieving an order by ID
-
-Each test uses a database session fixture and helper functions to create test users, items, and orders.
+Unit tests for order service functions.
+Tests order creation, retrieval, and user order management.
 """
 
 import pytest
@@ -19,7 +14,7 @@ from .helpers import create_test_user, create_test_item, create_test_order
 
 
 def test_create_order_service(db_session):
-    """Test creating an order"""
+    """Test creating an order."""
     user = create_test_user(db_session, "John")
     item1 = create_test_item(db_session, "Apple", 2.99, "Fresh apple")
     item2 = create_test_item(db_session, "Banana", 1.99, "Yellow banana")
@@ -34,7 +29,7 @@ def test_create_order_service(db_session):
         items=order_items,
         stripe_id="test_stripe_123",
         currency="usd",
-        amount=12.95 * 100,  # 3*299 + 2*199 CENTS
+        amount=12.95 * 100,  # Recall amount represents cents
         email="john@example.com",
     )
 
@@ -46,7 +41,7 @@ def test_create_order_service(db_session):
 
 
 def test_get_user_orders_service(db_session):
-    """Test getting user orders"""
+    """Test getting user orders."""
     user = create_test_user(db_session, "Jane")
     item = create_test_item(db_session, "Orange", 3.99, "Citrus fruit")
 
@@ -59,7 +54,7 @@ def test_get_user_orders_service(db_session):
 
 
 def test_get_order_by_id_service(db_session):
-    """Test getting an order by ID"""
+    """Test getting an order by ID."""
     user = create_test_user(db_session, "Bob")
     item = create_test_item(db_session, "Grape", 5.99, "Purple grapes")
 

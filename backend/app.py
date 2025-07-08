@@ -1,3 +1,8 @@
+"""
+FastAPI application for the e-commerce store backend.
+Handles authentication, payment processing, and order management.
+"""
+
 import os
 import json
 from contextlib import asynccontextmanager
@@ -37,6 +42,7 @@ stripe.api_key = STRIPE_SECRET_KEY
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Initialize database tables on startup."""
     create_db_and_tables()
     yield
 
@@ -63,18 +69,21 @@ app.include_router(admin.router)
 
 
 class CartItem(BaseModel):
+    """Cart item with product ID and quantity."""
+
     id: int
     qty: int
 
 
 @app.get("/myaccount", response_model=User)
 async def get_me(current_user: User = Depends(get_current_user)) -> User:
+    """Get current authenticated user information."""
     return current_user
 
 
 @app.get("/callback")
-async def auth_callback(request: Request):
-    # ... process Auth0 response, set session or cookies ...
+async def auth_callback():
+    """Handle Auth0 authentication callback."""
     return RedirectResponse(url="/myaccount")
 
 
@@ -82,7 +91,7 @@ async def auth_callback(request: Request):
 async def create_checkout_session(
     request: Request, current_user: User = Depends(get_current_user)
 ):
-    # TODO: perhaps check for email verification here
+    """Create Stripe checkout session from user's cart."""
     cart_items = await request.json()
     item_id_to_qty = {item["id"]: item["qty"] for item in json.loads(cart_items)}
     item_ids = list(item_id_to_qty.keys())
@@ -134,6 +143,7 @@ async def stripe_webhook(
     request: Request,
     stripe_signature: str = Header(None),
 ):
+    """Process Stripe webhook events and create orders."""
     payload = await request.body()
     try:
         event = stripe.Webhook.construct_event(
@@ -141,10 +151,10 @@ async def stripe_webhook(
             sig_header=stripe_signature,
             secret=STRIPE_WEBHOOK_SECRET,
         )
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid payload")
-    except stripe.error.SignatureVerificationError:
-        raise HTTPException(status_code=400, detail="Invalid signature")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Invalid payload") from exc
+    except stripe.error.SignatureVerificationError as exc:
+        raise HTTPException(status_code=400, detail="Invalid signature") from exc
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
@@ -164,6 +174,8 @@ async def stripe_webhook(
         )
         try:
             create_order_service(order_data=order_data, db=get_db_session())
-        except Exception as e:
-            raise HTTPException(status_code=500, detail="Order DB error: " + str(e))
+        except Exception as exc:
+            raise HTTPException(
+                status_code=500, detail="Order DB error: " + str(exc)
+            ) from exc
     return {"status": "success"}

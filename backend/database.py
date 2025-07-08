@@ -1,3 +1,8 @@
+"""
+Database configuration and session management for the backend application.
+Provides SQLModel engine setup and session factories for dependency injection.
+"""
+
 from typing import Generator
 from sqlmodel import SQLModel, create_engine, Session
 from dotenv import load_dotenv
@@ -14,12 +19,16 @@ engine = create_engine(DATABASE_URL, echo=True)
 
 
 def create_db_and_tables():
+    """Create all database tables from SQLModel metadata."""
     SQLModel.metadata.create_all(engine)
 
 
 def get_db() -> Generator[Session, None, None]:
+    """Dependency injection factory for database sessions."""
     with Session(engine) as session:
         yield session
 
+
 def get_db_session() -> Session:
+    """Create a new database session for direct use."""
     return Session(engine)
