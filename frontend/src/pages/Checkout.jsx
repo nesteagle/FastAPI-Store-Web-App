@@ -5,6 +5,8 @@ import { useShoppingCart } from "../context/CartContext";
 import CartItemList from "../components/CartItemList";
 import { useNotification } from "../context/NotificationContext";
 import { CartActionsCheckout } from "../components/CartActions";
+import Main from "../components/Main";
+import Button from "../components/Button";
 
 export default function CheckoutPage() {
     const { cart, changeCartItem, removeFromCart, clearCart } = useShoppingCart();
@@ -24,7 +26,7 @@ export default function CheckoutPage() {
     const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return (
-        <main className="min-h-screen bg-bg-primary py-12 transition-colors duration-200">
+        <Main className="py-12">
             <section className="max-w-5xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div className="md:col-span-2 bg-bg-primary rounded-3xl shadow-2xl border border-border-muted p-8 flex flex-col">
                     <h1 className="text-3xl md:text-4xl font-display font-extrabold text-text-primary mb-4">
@@ -58,7 +60,7 @@ export default function CheckoutPage() {
                             </div>
                             <CartActionsCheckout
                                 onClearCart={handleClearCart}
-                                checkoutButton={null} // Checkout button is in the right column
+                                checkoutButton={null}
                             />
                         </>
                     )}
@@ -87,7 +89,7 @@ export default function CheckoutPage() {
                     </div>
                 </aside>
             </section>
-        </main>
+        </Main>
     );
 }
 export function CheckoutButton() {
@@ -100,7 +102,7 @@ export function CheckoutButton() {
         setProcessing(true);
         const response = await callApi("/create-checkout-session/", "POST", formatCart(cart));
         setProcessing(false);
-        window.location.href = response.url; // Redirect to Stripe Checkout
+        window.location.href = response.url;
     };
 
     const formatCart = (cart) => {
@@ -112,33 +114,18 @@ export function CheckoutButton() {
     };
 
     return (
-        <button
-            type="button"
+        <Button
+            variant="primary"
+            size="xl"
             onClick={handleCheckout}
             disabled={processing}
-            className="
-        w-full flex items-center justify-center gap-3
-        bg-button text-text-white text-xl font-bold
-        py-4 px-6 rounded-2xl shadow-xl
-        hover:bg-button-hover focus:bg-button-hover
-        focus:outline-none focus:ring-2 focus:ring-ring-accent/40 focus:ring-offset-2
-        active:scale-active transition duration-150 select-none
-        disabled:opacity-60 disabled:cursor-not-allowed
-      "
-            aria-label="Proceed to secure checkout"
+            className="w-full flex items-center justify-center gap-3 rounded-2xl shadow-xl"
         >
-            <svg
-                className="w-6 h-6 text-text-white"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-            >
+            <svg className="w-6 h-6 text-text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true" >
                 <rect x="3" y="11" width="18" height="10" rx="2" />
                 <path d="M7 11V7a5 5 0 0110 0v4" />
             </svg>
             {processing ? "Processing..." : "Checkout"}
-        </button>
+        </Button>
     );
 }

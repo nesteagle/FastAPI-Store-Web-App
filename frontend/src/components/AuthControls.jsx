@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import ThemeSlider from "./ThemeSlider";
 import LoadingIcon from "./LoadingIcon";
+import Button from "./Button";
 
 export function AuthControls() {
     const { isAuthenticated, isLoading } = useAuth0();
@@ -21,27 +22,23 @@ export function LoginButton() {
     const { loginWithRedirect } = useAuth0();
 
     return (
-        <button
-            className="btn-transition text-text-white font-semibold px-4 py-2 rounded shadow focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
-            onClick={() => { loginWithRedirect(); }}
-        >
+        <Button variant="primary" onClick={() => loginWithRedirect()}>
             Log In
-        </button>
+        </Button>
     );
 }
 
 export function LogoutButton() {
     const { logout } = useAuth0();
     return (
-        <button
-            className="mt-2 w-full text-left px-4 py-2 rounded warning-btn-transition"
+        <Button
+            variant="warning"
             onClick={() => {
                 localStorage.clear();
                 logout({ logoutParams: { returnTo: window.location.origin } });
-            }}
-        >
+            }} className="mt-2 w-full text-left">
             Log Out
-        </button>
+        </Button>
     );
 }
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ProductGrid from "../components/ProductGrid";
 import useFetchList from "../hooks/useFetchList";
 import useProductFilters from "../hooks/useProducts";
+import Main from "../components/Main";
 
 export default function HomePage() {
     const fetchFunction = useMemo(() => ({
@@ -10,9 +11,9 @@ export default function HomePage() {
         method: "GET"
     }), []);
     const { data } = useFetchList(fetchFunction, "items", "items_cache");
-    const { products } = useProductFilters(data);
+    const { products } = useProductFilters(data, "Featured");
     return (
-        <main className="min-h-screen bg-bg-primary transition-colors duration-200 flex flex-col">
+        <Main>
             <section className="w-full bg-gradient-to-r from-accent/10 via-bg to-accent/10 py-20">
                 <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
                     <div className="flex-1">
@@ -55,13 +56,11 @@ export default function HomePage() {
                 </div>
             </section>
 
-
             <section className="w-full bg-bg-tertiary py-16">
                 <div className="max-w-4xl mx-auto px-6 text-center">
-                    <h3 className="text-2xl font-bold mb-4 text-text-primary">Our Story</h3>
+                    <h3 className="text-2xl font-bold mb-4 text-text-primary">My Story</h3>
                     <p className="text-lg text-text-muted mb-6">
-                        At nesteagle's amazing store, we believe in quality, transparency, and making shopping delightful. From our carefully selected products to our world-class support, we’re here to help you find your next favorite thing.
-                    </p>
+                        Hi, I'm Aaron! This production-ready e-commerce platform was an independently designed summer project of mine between first and second year, during my undergraduate degree in Computer Science + Statistics at UBC.</p>
                     <Link
                         to="/about"
                         className="link-primary"
@@ -70,6 +69,6 @@ export default function HomePage() {
                     </Link>
                 </div>
             </section>
-        </main>
+        </Main>
     );
 }

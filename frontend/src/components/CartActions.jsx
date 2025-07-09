@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Button from "./Button";
 
 export function CartActionsPopup({
     onClearCart,
@@ -7,20 +8,12 @@ export function CartActionsPopup({
     return (
         <div className="flex flex-col gap-3 mt-4">
             <div className="flex gap-2">
-                <button
-                    className="text-text-white px-4 py-2 rounded shadow font-semibold clear-btn-transition w-1/2"
-                    onClick={onClearCart}
-                >
+                <Button variant="danger" onClick={onClearCart} className="w-1/2">
                     Clear Cart
-                </button>
-
-                <Link
-                    to="/checkout"
-                    className=" text-text-white font-semibold px-4 py-2 rounded shadow btn-transition w-1/2 text-center"
-                    onClick={onClose}
-                >
-                    Checkout
-                </Link>
+                </Button>
+                <Button variant="primary" onClick={onClose} className="w-1/2">
+                    <Link to="/checkout">Checkout</Link>
+                </Button>
             </div>
             <Link
                 to="/catalog"
@@ -43,7 +36,6 @@ export function CartActionsCheckout({
             aria-label="Cart actions"
             className="w-full mt-8 flex flex-col items-center gap-6"
         >
-            {/* Add More Items Button */}
             <Link
                 to="/catalog"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-bg-tertiary text-text-accent font-semibold shadow-sm hover:bg-button hover:text-text-white focus:bg-button focus:text-text-white focus:outline-none focus:ring-2 focus:ring-ring-accent/50 focus:ring-offset-2 transition text-base group"
@@ -61,11 +53,11 @@ export function CartActionsCheckout({
                 Add More Items
             </Link>
 
-            {/* Clear Cart Button */}
-            <button
-                type="button"
+            <Button
+                variant="danger"
+                size="lg"
                 onClick={onClearCart}
-                className="inline-flex items-center gap-2 px-6 py-3 clear-btn-transition rounded-full"
+                className="inline-flex items-center gap-2 rounded-full"
             >
                 <svg
                     className="w-5 h-5 text-text-white"
@@ -77,9 +69,8 @@ export function CartActionsCheckout({
                     <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 Clear Cart
-            </button>
+            </Button>
 
-            {/* Checkout Button (passed as a prop for flexibility) */}
             <div className="w-full">
                 {checkoutButton}
             </div>

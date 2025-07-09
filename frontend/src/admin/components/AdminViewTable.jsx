@@ -8,6 +8,6 @@ export default function AdminViewTable({ endpoint, columns, dataKey }) {
     const { data, isDataLoading, error } = useFetchList(fetchFunction, dataKey);
 
     if (isDataLoading) return <LoadingIcon />;
-    if (error) return <div>Error: {error.message || "Unknown error"}</div>;
+    if (error) return <div className="text-text-primary">Error: {error.message || "Unknown error"}</div>;
     return <ObjectViewTable data={data} columns={columns} />;
 }

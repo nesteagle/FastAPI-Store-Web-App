@@ -43,7 +43,7 @@ class Order(SQLModel, table=True):
     amount: int = Field(default=None)
     user_id: str = Field(foreign_key="user.id", index=True)
     user: User = Relationship(back_populates="orders")
-    order_items: list["OrderItem"] = Relationship(back_populates="order_items")
+    order_items: list["OrderItem"] = Relationship(back_populates="order")
     email: str = Field(default=None, index=True)
 
 

@@ -1,5 +1,8 @@
 import { useState, useMemo } from "react";
 import useFetchList from "../hooks/useFetchList";
+import Main from "../components/Main";
+import Card from "../components/Card";
+import Button from "../components/Button";
 
 export default function AccountPage() {
     const fetchFunction = useMemo(() => ({
@@ -31,18 +34,18 @@ export default function AccountPage() {
 
     if (!orders?.length) {
         return (
-            <main className="max-w-2xl mx-auto py-20 px-4">
-                <div className="bg-bg-tertiary rounded p-10 text-center shadow">
+            <Main className="py-16">
+                <Card className="max-w-2xl mx-auto px-4 py-5 text-center shadow-lg">
                     <span className="font-display text-2xl mb-2 block text-text-primary">No Orders Yet</span>
                     <p className="text-text-muted">Your orders will appear here after your first purchase.</p>
-                </div>
-            </main>
+                </Card>
+            </Main>
         );
     }
 
     return (
-        <div className="min-h-screen w-full bg-bg-primary">
-            <main className="max-w-3xl mx-auto py-10 px-4">
+        <Main>
+            <div className="max-w-3xl mx-auto py-10 px-4">
                 <h1 className="font-display text-3xl font-bold mb-8 text-text-primary text-center">Order History</h1>
                 <div className="space-y-8">
                     {orders.map(order => (
@@ -53,7 +56,6 @@ export default function AccountPage() {
                             aria-label={`Order ${order.id} placed on ${formatDate(order.date)}`}
                         >
                             <div className="flex flex-col md:flex-row md:items-center justify-between p-6 gap-8">
-                                {/* Order Info */}
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-3 mb-2">
                                         <span className="font-medium text-text-muted text-sm">
@@ -83,27 +85,21 @@ export default function AccountPage() {
                                         </ul>
                                     </div>
                                 </div>
-                                {/* Order Total */}
                                 <div className="flex flex-col items-end md:items-center md:justify-center min-w-120px">
                                     <span className="text-button font-bold text-2xl mb-1">
                                         ${order.items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0).toFixed(2)}
                                     </span>
-                                    <button
-                                        className="mt-2 bg-button hover:bg-button-hover text-white px-4 py-2 rounded shadow transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-button"
-                                        aria-label={`View details for order ${order.id}`}
-                                        onClick={() => setSelectedOrder(order)}
-                                    >
+                                    <Button variant="primary" onClick={() => setSelectedOrder(order)}>
                                         View Details
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
-                {/* Modal for order details */}
                 {selectedOrder && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-                        <div className="bg-bg-secondary rounded shadow max-w-lg w-full p-8 relative animate-fadeIn">
+                        <Card className="shadow max-w-lg w-full p-8 relative animate-fadeIn">
                             <button
                                 className="absolute top-4 right-4 text-text-muted hover:text-button text-2xl focus:outline-none"
                                 onClick={() => setSelectedOrder(null)}
@@ -138,17 +134,13 @@ export default function AccountPage() {
                                     ${selectedOrder.items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0).toFixed(2)}
                                 </span>
                             </div>
-                            <button
-                                className="w-full bg-button hover:bg-button-hover text-white px-4 py-2 rounded shadow transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-button"
-                                onClick={() => setSelectedOrder(null)}
-                                aria-label="Close order details"
-                            >
+                            <Button variant="primary" size="lg" onClick={() => setSelectedOrder(null)}>
                                 Done
-                            </button>
-                        </div>
+                            </Button>
+                        </Card>
                     </div>
                 )}
-            </main>
             </div>
+        </Main>
     );
 }

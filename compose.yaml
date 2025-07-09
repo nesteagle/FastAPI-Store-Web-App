@@ -6,7 +6,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app/backend
-      - fastapi_db:/app/backend/db:/app/backend/db/database.db
+      - fastapi_db:/app/backend/db
     environment:
       - PYTHONUNBUFFERED=1
     working_dir: /app

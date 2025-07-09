@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import AdminViewTable from "../components/AdminViewTable";
 import { AdminLinkNavigation } from "../components/AdminLinkNavigation";
+import Main from "../../components/Main";
 
 export default function Orders() {
     const columns = useMemo(() => [
@@ -16,10 +17,10 @@ export default function Orders() {
     ], []);
 
     return (
-        <div>
+        <Main>
             <h1 className="font-display text-2xl md:text-3xl font-bold text-text-primary mb-6 tracking-tight">Orders</h1>
             <AdminViewTable endpoint="/admin/orders/" columns={columns} dataKey="orders" />
             <AdminLinkNavigation/>
-        </div>
+        </Main>
     );
 }

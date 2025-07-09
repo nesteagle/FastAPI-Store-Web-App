@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { useShoppingCart } from "../context/CartContext";
 import { useNotification } from "../context/NotificationContext";
 import CartItemList from "./CartItemList";
-import {CartActionsPopup} from "./CartActions";
+import { CartActionsPopup } from "./CartActions";
+import Button from "./Button";
 
 export default function ShoppingCart({ onClose }) {
     const { cart, changeCartItem, removeFromCart, clearCart } = useShoppingCart();
@@ -27,14 +28,10 @@ export default function ShoppingCart({ onClose }) {
                     <svg className="w-12 h-12 text-surface-muted mb-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m13-9l2 9m-5-9V6a2 2 0 10-4 0v2"></path>
                     </svg>
-                    <p className="text-text-muted text-base">Your cart is empty.</p>
-                    <Link
-                        to="/items"
-                        className="mt-4 inline-block bg-button text-text-white font-semibold px-4 py-2 rounded shadow hover:bg-button-hover transition"
-                        onClick={onClose}
-                    >
-                        Shop Products
-                    </Link>
+                    <p className="text-text-muted text-base mb-4">Your cart is empty.</p>
+                    <Button variant="primary" onClick={onClose}>
+                        <Link to="/catalog">Shop Products</Link>
+                    </Button>
                 </div>
             ) : (
                 <>

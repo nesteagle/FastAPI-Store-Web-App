@@ -23,7 +23,6 @@ export function CartProvider({ children }) {
         }
     }, [cart]);
 
-    // sets item to have quantity quantity
     // requires quantity to be >=1
     function changeCartItem(product, quantity) {
         setCart((prevCart) => {
@@ -31,7 +30,7 @@ export function CartProvider({ children }) {
             if (existing) {
                 return prevCart.map((item) =>
                     item.id === product.id
-                        ? { ...item, quantity:  quantity }
+                        ? { ...item, quantity: quantity }
                         : item
                 );
             } else {
@@ -40,7 +39,6 @@ export function CartProvider({ children }) {
         });
     }
 
-    // adds item with quantity to cart, or adds quantity items to cart
     // requires quantity to be >=1
     function addCartItem(product, quantity) {
         setCart((prevCart) => {
@@ -57,12 +55,10 @@ export function CartProvider({ children }) {
         });
     }
 
-    // Accessed through "remove" button on cart
     function removeFromCart(productId) {
         setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
     }
 
-    // Accessed through "clear cart" and confirmation 
     function clearCart() {
         setCart([]);
     }

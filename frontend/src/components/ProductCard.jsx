@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from 'react-router-dom';
 import { useShoppingCart } from "../context/CartContext";
 import { useNotification } from "../context/NotificationContext";
+import Button from "./Button";
 
 export default function ProductCard({ product, showAddToCart }) {
     const [imgError, setImgError] = useState(false);
@@ -32,15 +33,9 @@ export default function ProductCard({ product, showAddToCart }) {
 
             <div className="flex flex-col gap-2 mt-auto">
                 {showAddToCart &&
-                    <button
-                        className="btn-transition text-text-white font-semibold py-2 rounded-lg shadow  focus:outline-none focus:ring-2 focus:ring-ring-accent/50"
-                        onClick={() => {
-                            addCartItem(product, 1);
-                            showToast("Item added to cart!", "success");
-                        }}
-                    >
+                    <Button variant="primary" onClick={() => { addCartItem(product, 1); showToast("Item added to cart!", "success"); }}>
                         Add to Cart
-                    </button>}
+                    </Button>}
                 <Link
                     to={`/products/${product.id}`}
                     className="inline-block gray-btn-transition py-2"

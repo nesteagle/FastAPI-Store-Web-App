@@ -2,6 +2,7 @@ import FormField from "../../components/FormField";
 import { useAuthenticatedApi } from "../../hooks/useApi";
 import { useMemo } from "react";
 import useCreationForm from "../../hooks/useCreationForm";
+import Button from "../../components/Button";
 
 export default function ItemCreationForm() {
     const { callApi } = useAuthenticatedApi();
@@ -24,7 +25,7 @@ export default function ItemCreationForm() {
             className="bg-bg-secondary p-6 rounded-lg shadow-md text-text-primary"
             onSubmit={handleSubmit}
         >
-            <h3 className="text-2xl font-semibold mb-4">Create New Item</h3>
+            <h3 className="text-2xl font-semibold mb-4">Create New Item - Admin Only</h3>
             <FormField
                 label="Name:"
                 id="name"
@@ -68,12 +69,9 @@ export default function ItemCreationForm() {
                 width="w-full"
 
             />
-            <button
-                type="submit"
-                className="w-full py-2 bg-button hover:bg-button-hover text-text-white font-bold rounded"
-            >
+            <Button variant="primary" type="submit" className="w-full">
                 Create Item
-            </button>
+            </Button>
         </form>
     );
 }

@@ -31,14 +31,12 @@ function App() {
                 <NotificationProvider>
                     <Header />
                     <Routes>
-                        {/* User routes */}
                         <Route path="/" element={<HomePage />} />
                         <Route path="/account" element={<AccountPage />} />
                         <Route path="/callback" element={<Callback />} />
                         <Route path="/checkout" element={<CheckoutPage />} />
                         <Route path="/catalog" element={<Catalog />} />
                         <Route path="/products/:id" element={<ProductPage />} />
-                        {/* Admin routes */}
                         <Route path="/admin/items" element={<Items />} />
                         <Route path="/admin/users" element={<Users />} />
                         <Route path="/admin/orders" element={<Orders />} />
