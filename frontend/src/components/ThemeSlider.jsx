@@ -14,10 +14,10 @@ export default function ThemeSlider() {
             className=" relative inline-flex h-9 w-18 items-center rounded-full bg-bg-tertiary dark:bg-bg-secondary transition-colors duration-200 outline-none ring-2 ring-ring-accent shadow-sm group select-none touch-manipulation hover:scale-minimal cursor-pointer"
             style={{ minWidth: 44, minHeight: 24 }}
         >
-            <span className={`${labelStyle} absolute left-1.5 text-text-white`}>
+            <span className={`${labelStyle} absolute left-2.5 text-text-white`}>
                 On
             </span>
-            <span className={`${labelStyle} absolute right-1.5 text-text-primary`}>
+            <span className={`${labelStyle} absolute right-2.5 text-text-primary`}>
                 Off
             </span>
             <span

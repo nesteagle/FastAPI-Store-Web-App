@@ -1,3 +1,4 @@
+import Button from "./Button";
 import FormField from "./FormField";
 
 export default function CartItemList({
@@ -36,13 +37,9 @@ export default function CartItemList({
                                 }
                             }}
                         />
-                        <button
-                            className="w-full text-left px-2 py-1.5 rounded warning-btn-transition"
-                            onClick={() => removeFromCart(item.id)}
-                            aria-label={`Remove ${item.name} from cart`}
-                        >
+                        <Button variant="warning" size="xs" onClick={() => removeFromCart(item.id)} className="w-full text-left">
                             Remove
-                        </button>
+                        </Button>
                     </div>
                 </li>
             ))}

@@ -6,6 +6,7 @@ export default function Button({ variant = "primary", size = "md", children, cla
         secondary: "gray-btn-transition",
         catalog_disabled: "bg-bg-tertiary text-text-primary hover:bg-button hover:text-text-white transition",
         danger: "clear-btn-transition",
+        warning: "warning-btn-transition",
         link: "link-primary"
     };
     

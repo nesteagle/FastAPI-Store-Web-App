@@ -1,5 +1,7 @@
 import { useState } from "react";
 import FormField from "../../components/FormField"; // Adjust the import path as needed
+import Button from "../../components/Button";
+import Card from "../../components/Card";
 
 export default function EditItemUI({ item, onClose, onSave }) {
     const [form, setForm] = useState({
@@ -20,14 +22,10 @@ export default function EditItemUI({ item, onClose, onSave }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-                <button
-                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl"
-                    onClick={onClose}
-                    aria-label="Close"
-                >
+            <Card className="p-6 w-full max-w-md relative">
+                <Button variant="secondary" onClick={onClose} className="absolute top-2 right-2">
                     ×
-                </button>
+                </Button>
                 <h2 className="text-xl font-bold mb-4">Edit Item</h2>
                 <form onSubmit={handleSubmit} className="space-y-2">
                     <FormField
@@ -68,22 +66,15 @@ export default function EditItemUI({ item, onClose, onSave }) {
                         width="w-full"
                     />
                     <div className="flex justify-end space-x-2 pt-2">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
-                        >
+                        <Button variant="secondary" type="button" onClick={onClose}>
                             Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-                        >
+                        </Button>
+                        <Button variant="primary" type="submit">
                             Save
-                        </button>
+                        </Button>
                     </div>
                 </form>
-            </div>
+            </Card>
         </div>
     );
 }

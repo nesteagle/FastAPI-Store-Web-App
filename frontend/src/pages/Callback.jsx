@@ -9,7 +9,7 @@ export default function Callback() {
     const { isLoading, isAuthenticated, error, getAccessTokenSilently } = useAuth0();
     const [backendUser, setBackendUser] = useState(null);
     const { callApi } = useAuthenticatedApi();
-    const {showToast} = useNotification();
+    const { showToast } = useNotification();
     useEffect(() => {
         const fetchBackendUser = async () => {
             try {
@@ -30,12 +30,13 @@ export default function Callback() {
     if (error) return handleError(`Auth error: ${error.message}`);
     if (backendUser.error) return handleError(`Backend error: ${backendUser.error}`);
 
-    function handleError(message){
+    function handleError(message) {
         showToast(message, "error");
         return <div>{message}</div>
     }
 
     showToast("Logged in successfully!");
+    localStorage.clear();
 
     return (
         <Navigate to="/" replace />

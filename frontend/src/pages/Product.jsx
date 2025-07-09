@@ -5,6 +5,7 @@ import { getItem } from "../api/itemsApi";
 import { useNotification } from "../context/NotificationContext";
 import Main from "../components/Main";
 import Button from "../components/Button";
+import FormField from "../components/FormField";
 
 export default function ProductPage() {
     const { id } = useParams();
@@ -15,6 +16,7 @@ export default function ProductPage() {
     const { addCartItem } = useShoppingCart();
     const [quantity, setQuantity] = useState(1);
     const { showToast } = useNotification();
+
     useEffect(() => {
         async function fetchItem() {
             try {
@@ -33,21 +35,17 @@ export default function ProductPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh]">
                 <span className="text-error text-lg font-semibold mb-4">{error}</span>
-                <button
-                    className="bg-button text-text-white font-semibold px-4 py-2 rounded shadow hover:bg-button-hover transition"
-                    onClick={() => navigate(-1)}
-                >
+                <Button variant="secondary" onClick={() => navigate(-1)}>
                     ← Back to Catalog
-                </button>
+                </Button>
             </div>
         );
     }
+
     if (!product) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh]">
-                <svg className="w-12 h-12 text-surface-muted animate-spin mb-4" fill="none" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                </svg>
+                <div className="w-12 h-12 border-4 border-text-muted border-t-transparent rounded-full animate-spin mb-4"></div>
                 <span className="text-text-muted text-lg">Loading product...</span>
             </div>
         );
@@ -57,31 +55,27 @@ export default function ProductPage() {
 
     return (
         <Main>
-            <div className="relative min-h-screen bg-gradient-to-b from-bg via-surface/60 to-bg/80 transition-colors duration-200 py-24 px-4 flex flex-col items-center">
-                <div className="w-full max-w-7xl rounded-[2.5rem] shadow-2xl bg-bg-secondary border border-border-muted overflow-visible relative flex flex-col gap-8 px-0 md:px-12 py-20">
-                    <nav className="px-8 text-sm text-text-muted flex items-center gap-2">
-                        <span
-                            className="link-underline-transition"
-                            onClick={() => navigate("/")}
-                        >
+            <div className="relative min-h-screen bg-gradient-to-b from-bg via-surface/60 to-bg/80 py-24 px-4 flex flex-col items-center">
+                <div className="w-full max-w-7xl rounded-[2.5rem] shadow-2xl bg-bg-secondary border border-border-muted px-8 md:px-12 py-20">
+                    <nav className="text-sm text-text-muted flex items-center gap-2 mb-6">
+                        <span className="link-underline-transition" onClick={() => navigate("/")}>
                             Home
                         </span>
-                        <span className="mx-1">/</span>
-                        <span
-                            className="link-underline-transition"
-                            onClick={() => navigate(-1)}
-                        >
+                        <span>/</span>
+                        <span className="link-underline-transition" onClick={() => navigate(-1)}>
                             Catalog
                         </span>
-                        <span className="mx-1">/</span>
-                        <span className="font-semibold link-underline-transition">{product.name}</span>
+                        <span>/</span>
+                        <span className="font-semibold">{product.name}</span>
                     </nav>
-                    <Button variant="secondary" size="lg" onClick={() => navigate(-1)} className="mb-16 ml-7">
+
+                    <Button variant="secondary" size="lg" onClick={() => navigate(-1)} className="mb-16">
                         ← Back to Catalog
                     </Button>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-24 px-8">
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-24">
                         <div className="flex flex-col items-center justify-center relative">
-                            <div className="absolute -inset-10 z-0 pointer-events-none rounded-3xl bg-gradient-to-tr from-accent/10 via-transparent to-accent/5 blur-2xl" />
+                            <div className="absolute -inset-10 rounded-3xl bg-gradient-to-tr from-accent/10 via-transparent to-accent/5 blur-2xl" />
                             {validImageSrc && !imgError ? (
                                 <img
                                     src={product.image_src}
@@ -96,26 +90,24 @@ export default function ProductPage() {
                             )}
                         </div>
 
-                        <div className="flex flex-col justify-center pl-0 md:pl-12">
+                        <div className="flex flex-col justify-center">
                             <h1 className="text-5xl font-display font-extrabold text-text-primary mb-6 leading-tight">{product.name}</h1>
                             <p className="text-text-accent text-4xl font-bold mb-8">${product.price.toFixed(2)}</p>
 
                             <section className="bg-bg-tertiary rounded-xl p-8 mb-10 shadow-sm">
                                 <h2 className="text-xl font-bold mb-2 text-text-primary">Description</h2>
-                                <p className="text-text-primary font-normal text-lg">{product.description}</p>
+                                <p className="text-text-primary text-lg">{product.description}</p>
                             </section>
 
-                            <div className="flex items-center gap-4 mt-2 mb-8">
-                                <label htmlFor="quantity" className="text-lg font-semibold text-text-primary">
-                                    Quantity:
-                                </label>
-                                <input
+                            <div className="flex items-center gap-4 mb-8">
+                                <FormField
+                                    label="Quantity:"
                                     id="quantity"
                                     type="number"
                                     min={1}
                                     value={quantity}
                                     onChange={e => setQuantity(Math.max(1, Number(e.target.value)))}
-                                    className="w-20 px-4 py-2 rounded border border-border-muted bg-bg-tertiary text-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-ring-accent/50 transition"
+                                    className="w-20 text-lg"
                                 />
                             </div>
 
@@ -124,15 +116,12 @@ export default function ProductPage() {
                                 size="xl"
                                 onClick={() => {
                                     addCartItem(product, quantity);
-                                    {
-                                        quantity > 1 ?
-                                            showToast("Items added to cart!", "success") : showToast("Item added to cart!", "success")
-                                    }
+                                    showToast(`Item${quantity > 1 ? 's' : ''} added to cart!`, "success");
                                 }}
                                 className="rounded-2xl shadow-xl text-2xl flex w-full items-center">
-                                <span className="flex items-center gap-2">Add to Cart</span>
-                                <span className="ml-auto text-text-white text-2xl font-bold text-right">
-                                    ${quantity > 1 ? (product.price * quantity).toFixed(2) : product.price.toFixed(2)}
+                                <span>Add to Cart</span>
+                                <span className="ml-auto text-2xl font-bold">
+                                    ${(product.price * quantity).toFixed(2)}
                                 </span>
                             </Button>
                         </div>

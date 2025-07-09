@@ -1,4 +1,4 @@
-export default function FormField({ label, id, type = "text", name, value, onChange, required = false, width = "w-14", ...rest }) {
+export default function FormField({ label, id, type = "text", name, value, onChange, required = false, width = "w-14", className="", ...rest }) {
     return (
         <div className="mb-4">
             {label && (
@@ -17,7 +17,7 @@ export default function FormField({ label, id, type = "text", name, value, onCha
                 value={value}
                 onChange={onChange}
                 required={required}
-                className={`${width} px-3 py-2 rounded border border-border-muted bg-bg-tertiary text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-ring-accent/50`}
+                className={`${width} px-3 py-2 rounded border border-border-muted bg-bg-tertiary text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-ring-accent/50 ${className}`}
                 {...rest}
             />
         </div>

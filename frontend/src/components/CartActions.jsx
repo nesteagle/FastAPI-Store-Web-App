@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Button from "./Button";
+import Icon from "./Icon";
 
 export function CartActionsPopup({
     onClearCart,
@@ -41,15 +42,7 @@ export function CartActionsCheckout({
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-bg-tertiary text-text-accent font-semibold shadow-sm hover:bg-button hover:text-text-white focus:bg-button focus:text-text-white focus:outline-none focus:ring-2 focus:ring-ring-accent/50 focus:ring-offset-2 transition text-base group"
                 tabIndex={0}
             >
-                <svg
-                    className="w-5 h-5 text-text-accent group-hover:text-text-white group-focus:text-text-white transition"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                >
-                    <path d="M12 4v16m8-8H4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <Icon name="plus" size={5} className="text-text-accent group-hover:text-text-white group-focus:text-text-white transition" />
                 Add More Items
             </Link>
 
@@ -59,15 +52,7 @@ export function CartActionsCheckout({
                 onClick={onClearCart}
                 className="inline-flex items-center gap-2 rounded-full"
             >
-                <svg
-                    className="w-5 h-5 text-text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                >
-                    <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <Icon name="close" size={5} className="text-text-white" />
                 Clear Cart
             </Button>
 

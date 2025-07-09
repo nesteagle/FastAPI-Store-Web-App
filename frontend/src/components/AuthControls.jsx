@@ -36,7 +36,8 @@ export function LogoutButton() {
             onClick={() => {
                 localStorage.clear();
                 logout({ logoutParams: { returnTo: window.location.origin } });
-            }} className="mt-2 w-full text-left">
+            }}
+            className="w-full">
             Log Out
         </Button>
     );
@@ -100,23 +101,19 @@ export function ProfileMenu() {
                             <div className="text-xs text-text-muted truncate max-w-[140px]">{user.email}</div>
                         </div>
                     </div>
-                    <div className="pt-1 flex flex-col items-center w-full space-y-1">
-                        <div className="flex items-center px-3 py-2 w-full">
-                            <span className="text-text-primary font-medium mr-6">
-                                Dark Mode
-                            </span>
+                    <div className="pt-1 flex flex-col w-full space-y-1">
+                        <div className="flex items-center justify-between px-3 py-2">
+                            <span className="text-text-primary font-medium">Dark Mode</span>
                             <ThemeSlider />
                         </div>
                         <Link
                             to="/account"
-                            className="w-full text-left px-3 py-2 rounded text-text-primary hover:bg-bg-tertiary transition font-medium"
+                            className="w-full px-3 py-2 rounded text-text-primary hover:bg-bg-tertiary transition font-medium"
                             onClick={() => setOpen(false)}
                         >
                             Order History
                         </Link>
-                        <div className="w-full">
-                            <LogoutButton />
-                        </div>
+                        <LogoutButton />
                     </div>
                 </div>
             )}

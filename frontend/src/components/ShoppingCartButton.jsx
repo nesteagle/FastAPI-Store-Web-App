@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useShoppingCart } from "../context/CartContext";
 import ShoppingCart from "./ShoppingCart";
+import Icon from "./Icon";
 
 export default function ShoppingCartButton() {
     const { cart } = useShoppingCart();
@@ -24,9 +25,7 @@ export default function ShoppingCartButton() {
                 onClick={() => setOpen((v) => !v)}
                 aria-label="Open shopping cart"
             >
-                <svg className="w-6 h-6 text-text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m13-9l2 9m-5-9V6a2 2 0 10-4 0v2"></path>
-                </svg>
+                <Icon name="cart" className="text-text-accent" />
                 {itemCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-error text-text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
                         {itemCount}

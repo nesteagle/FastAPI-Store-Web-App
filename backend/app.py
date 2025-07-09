@@ -125,7 +125,7 @@ async def create_checkout_session(
             payment_method_types=["card"],
             line_items=line_items,
             mode="payment",
-            success_url=f"{FRONTEND_URL}/",
+            success_url=f"{FRONTEND_URL}/callback/",
             cancel_url=f"{FRONTEND_URL}/checkout",
             metadata={
                 "user_id": str(current_user.id),
