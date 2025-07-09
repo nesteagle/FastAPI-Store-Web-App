@@ -17,15 +17,7 @@ This production-ready e-commerce platform was a summer project of mine between f
 
 **What makes this extraordinary:**
 - **Student Achievement**: Built entirely during my first-year summer break, showcasing accelerated learning and professional-level execution
-
-
-
-### REWORK BELOW
-- **Rapid Learning and Proficiency**: Developed this project solo in just a few weeks, mastering all technologies from scratch by studying official documentation. Quickly went from nothing to proficient in React, learned and implemented Auth0 SDK from scratch with RBAC and advanced authentication (including web-configured workflows not visible in this repo), and learned FastAPI/SQLModel integration independently.
-### REWORK ABOVE
-
-
-
+- **Self-Taught Full-Stack Mastery**: Independently learned and implemented modern web technologies including React, FastAPI, Auth0 authentication and RBAC, and Stripe payments by studying official documentation, advancing from foundational programming to production-ready development in a month.
 - **Cutting-Edge Technology**: Early adoption of Auth0-FastAPI (which at time of integration was 2 weeks old) and other recent technologies (e.g. Tailwind CSS v4.1, released April 2025)
 - **Production Excellence**: Backend components crafted with a detail-oriented process, demonstrating industry best practices such as authentication, RESTful APIs, and payment processing
 - **Complete Ownership**: Solo development of each aspect, demonstrating comprehensive full-stack knowledge beyond typical academic projects.
@@ -167,9 +159,7 @@ const AdminViewTable = ({ endpoint, columns, dataKey }) => {
 **Backend:** FastAPI with automatic OpenAPI documentation at `/docs`  
 **Deployment:** Docker Compose orchestration for seamless development workflow
 
-This project demonstrates production-ready architecture with enterprise-grade authentication, payment processing, and responsive design.
-
-# TODO: ADD AZURE LINK TO DEMO SITE.
+This project demonstrates production-ready architecture with enterprise-grade authentication, payment processing, and responsive design. A link to the demo build will be available soon.
 
 ---
 

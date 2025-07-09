@@ -89,7 +89,7 @@ export default function Catalog() {
                         <p className="text-text-muted text-lg">No products found in this category.</p>
                     </div>
                 )}
-            <Container>
+            </Container>
         </Main>
     );
 }
