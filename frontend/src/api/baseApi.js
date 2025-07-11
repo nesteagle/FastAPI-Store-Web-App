@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const { API_BASE_URL } = window.APP_CONFIG;
 
 export async function apiRequest(endpoint, method = 'GET', data = null, token = null) {
     const headers = {

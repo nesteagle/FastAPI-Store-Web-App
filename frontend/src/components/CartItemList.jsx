@@ -37,7 +37,7 @@ export default function CartItemList({
                                 }
                             }}
                         />
-                        <Button variant="warning" size="xs" onClick={() => removeFromCart(item.id)} className="w-full text-left">
+                        <Button variant="warning" size="xs" onClick={() => removeFromCart(item.id)} className="w-full text-left mt-1.5">
                             Remove
                         </Button>
                     </div>

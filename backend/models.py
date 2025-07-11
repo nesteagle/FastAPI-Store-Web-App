@@ -18,6 +18,7 @@ def utc_now():
 
 class Item(SQLModel, table=True):
     """Product item model with name, price, and optional image."""
+
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, max_length=100)
     description: str | None = Field(default=None, max_length=500)
@@ -28,29 +29,36 @@ class Item(SQLModel, table=True):
 
 class User(SQLModel, table=True):
     """User model with Auth0 integration and order history."""
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
-    auth0_sub: str = Field(index=True, unique=True)
-    email: str = Field(index=True)
+
+    id: str = Field(
+        default_factory=lambda: str(uuid.uuid4()), primary_key=True, max_length=36
+    )
+    auth0_sub: str = Field(index=True, unique=True, max_length=64)
+    email: str = Field(index=True, max_length=255)
     orders: list["Order"] = Relationship(back_populates="user")
 
 
 class Order(SQLModel, table=True):
-    """Order model tracking purchases with Stripe id integration.  Amount is in cents."""
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
+    """Order model tracking purchases with Stripe id integration. Amount is in cents."""
+
+    id: str = Field(
+        default_factory=lambda: str(uuid.uuid4()), primary_key=True, max_length=36
+    )
     date: datetime = Field(default_factory=utc_now, index=True)
-    stripe_id: str = Field(default=None, index=True)
-    currency: str | None = Field(default="USD")
+    stripe_id: str = Field(default=None, index=True, max_length=64)
+    currency: str | None = Field(default="USD", max_length=10)
     amount: int = Field(default=None)
-    user_id: str = Field(foreign_key="user.id", index=True)
+    user_id: str = Field(foreign_key="user.id", index=True, max_length=36)
     user: User = Relationship(back_populates="orders")
     order_items: list["OrderItem"] = Relationship(back_populates="order")
-    email: str = Field(default=None, index=True)
+    email: str = Field(default=None, index=True, max_length=255)
 
 
 class OrderItem(SQLModel, table=True):
     """Links orders to items with quantity."""
+
     id: int | None = Field(default=None, primary_key=True)
-    order_id: str = Field(foreign_key="order.id", index=True)
+    order_id: str = Field(foreign_key="order.id", index=True, max_length=36)
     order: Order = Relationship(back_populates="order_items")
     item_id: int = Field(foreign_key="item.id", index=True)
     item: Item = Relationship(back_populates="order_items")
@@ -59,12 +67,14 @@ class OrderItem(SQLModel, table=True):
 
 class OrderItemCreate(BaseModel):
     """Schema for creating order items with item ID and quantity."""
+
     item_id: int
     quantity: int = 1
 
 
 class OrderCreate(BaseModel):
     """Schema for creating orders with items and Stripe payment details. Amount is in cents."""
+
     user_id: str
     items: list[OrderItemCreate]
     stripe_id: str

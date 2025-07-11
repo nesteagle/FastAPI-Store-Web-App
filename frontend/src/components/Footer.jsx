@@ -7,7 +7,7 @@ export default function Footer() {
         <footer className="bg-bg-secondary text-text-muted border-t border-border-muted py-6 px-4 transition-colors duration-200 relative">
             <Container className="flex flex-col md:flex-row items-center justify-between gap-4">                <div className="flex items-center gap-2">
                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-button/10">
-                    <Icon name="check" size={5} className="text-text-accent" />
+                    <Icon name="check" className="text-text-accent" />
                 </span>
                 <span className="font-display text-lg font-bold text-text-primary tracking-tight">nesteagle</span>
             </div>

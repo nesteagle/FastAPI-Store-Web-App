@@ -48,14 +48,14 @@ export default function Catalog() {
                 <Container className="flex justify-center">
                     <div className="relative w-full max-w-xl">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-accent">
-                            <Icon name="search" size={6} />
+                            <Icon name="search" size={24} />
                         </span>
                         <input
                             type="text"
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             placeholder={`Search ${category.toLowerCase()} products...`}
-                            className="w-full pl-12 pr-14 py-4 rounded-full border-2 border-accent/30 bg-bg-tertiary text-lg focus:outline-none focus:ring-2 focus:ring-ring-accent/40 transition"
+                            className="w-full pl-12 pr-14 py-4 rounded-full border-2 border-accent/30 bg-bg-tertiary text-lg focus:outline-none focus:ring-2 focus:ring-ring-accent/40 transition text-text-primary"
                         />
                         {search && (
                             <Button
@@ -78,14 +78,14 @@ export default function Catalog() {
                     </div>
                 ) : error ? (
                     <div className="flex flex-col items-center py-24">
-                        <Icon name="error" size={12} className="text-error mb-4" />
+                        <Icon name="error" size={48} className="text-error mb-4" />
                         <p className="text-error text-lg">Failed to load products. Please try again later.</p>
                     </div>
                 ) : products.length ? (
                     <ProductGrid products={products} />
                 ) : (
                     <div className="flex flex-col items-center py-24">
-                        <Icon name="cart" size={12} className="text-text-muted mb-4" />
+                        <Icon name="cart" size={48} className="text-text-muted mb-4" />
                         <p className="text-text-muted text-lg">No products found in this category.</p>
                     </div>
                 )}

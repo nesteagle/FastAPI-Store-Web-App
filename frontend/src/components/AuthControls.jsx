@@ -56,7 +56,7 @@ export function Profile() {
                 <img
                     src={user.picture}
                     alt={user.name}
-                    className="w-8 h-8 rounded-full border border-border-muted shadow-sm"
+                    className="rounded-full border border-border-muted shadow-sm"
                 />
                 <span className="hidden sm:inline text-sm text-text-muted font-medium truncate max-w-[120px]">{user.email}</span>
             </div>

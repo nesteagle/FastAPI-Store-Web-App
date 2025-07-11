@@ -3,19 +3,25 @@ Database configuration and session management for the backend application.
 Provides SQLModel engine setup and session factories for dependency injection.
 """
 
+import pyodbc
+import urllib.parse
 from typing import Generator
 from sqlmodel import SQLModel, create_engine, Session
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+server = os.getenv("AZURE_SQL_SERVER")
+port = os.getenv("AZURE_SQL_PORT")
+database = os.getenv("AZURE_SQL_DATABASE")
+user = os.getenv("AZURE_SQL_USER")
+password = os.getenv("AZURE_SQL_PASSWORD")
 
-if not DATABASE_URL:
-    raise Exception("Missing DB URL")
+connString = f"Driver={{ODBC Driver 18 for SQL Server}};Server={server},{port};Database={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30"
 
-engine = create_engine(DATABASE_URL, echo=True)
+params = urllib.parse.quote_plus(connString)
+DATABASE_URL = f"mssql+pyodbc:///?odbc_connect={params}"
+
+engine = create_engine(DATABASE_URL, echo=False)
 
 
 def create_db_and_tables():

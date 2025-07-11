@@ -50,8 +50,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    "https://frontend-app.graydune-f392eb79.westus2.azurecontainerapps.io"
 ]
 
 app.add_middleware(

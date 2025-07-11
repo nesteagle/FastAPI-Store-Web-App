@@ -1,4 +1,4 @@
-FROM node:lts-slim
+FROM node:lts-slim AS builder
 
 WORKDIR /app
 
@@ -7,8 +7,16 @@ RUN npm install
 
 COPY . .
 
-ENV CHOKIDAR_USEPOLLING=true
+RUN npm run build
 
-EXPOSE 5173
+FROM node:lts-slim
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+WORKDIR /app
+
+RUN npm install -g serve
+
+COPY --from=builder /app/dist ./dist
+
+EXPOSE 8080
+
+CMD ["serve", "-s", "dist", "-l", "8080"]

@@ -26,9 +26,9 @@ export default function ShoppingCart({ onClose }) {
             <h2 className="text-xl font-display font-bold text-text-primary mb-4">Shopping Cart</h2>
             {cart.length === 0 ? (
                 <div className="flex flex-col items-center py-8">
-                    <Icon name="cart" size={12} className="text-text-muted mb-4" />
-                    <p className="text-text-muted text-base mb-4">Your cart is empty.</p>
-                    <Button variant="primary" onClick={onClose}>
+                    <Icon name="cart" size={48} className="text-text-muted mb-4" />
+                    <p className="text-text-muted text-lg mb-4">Your cart is empty.</p>
+                    <Button variant="primary" onClick={onClose} className="rounded-full">
                         <Link to="/catalog">Shop Products</Link>
                     </Button>
                 </div>

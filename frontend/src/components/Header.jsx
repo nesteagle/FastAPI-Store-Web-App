@@ -21,7 +21,7 @@ export default function StoreHeader() {
                 <div className="flex items-center">
                     <Link to="/" className="flex items-center group">
                         <span className="inline-block bg-button/10 rounded-full p-2 mr-2">
-                            <Icon name="check" size={8} className="text-text-accent hover:scale-icon-small transition-transform" />
+                            <Icon name="check" size={36} className="text-text-accent hover:scale-icon-small transition-transform" />
                         </span>
                         <span className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-text-primary group-hover:text-text-accent transition-colors">
                             nesteagle's store
@@ -41,7 +41,7 @@ export default function StoreHeader() {
                     <ShoppingCartButton />
                     <AuthControls />
                     <Button variant="secondary" size="xs" onClick={() => setMenuOpen((v) => !v)} className="md:hidden">
-                        <Icon name="mobile" />
+                        <Icon name="mobile" className="text-text-primary"/>
                     </Button>
                 </div>
             </Container>
@@ -54,7 +54,7 @@ export default function StoreHeader() {
                             <Link
                                 key={link.to}
                                 to={link.to}
-                                className="text-base font-medium p-2 rounded hover:bg-bg-tertiary transition"
+                                className="text-text-primary font-medium p-2 rounded hover:bg-bg-tertiary transition"
                                 onClick={() => setMenuOpen(false)}
                             >
                                 {link.text}

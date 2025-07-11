@@ -28,37 +28,30 @@ export function CartActionsPopup({
     );
 }
 
-export function CartActionsCheckout({
-    onClearCart,
-    checkoutButton,
-}) {
+export function CartActionsCheckout({ onClearCart }) {
     return (
         <nav
             aria-label="Cart actions"
-            className="w-full mt-8 flex flex-col items-center gap-6"
+            className="w-full mt-8 flex flex-row items-center gap-6 justify-end"
         >
             <Link
                 to="/catalog"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-bg-tertiary text-text-accent font-semibold shadow-sm hover:bg-button hover:text-text-white focus:bg-button focus:text-text-white focus:outline-none focus:ring-2 focus:ring-ring-accent/50 focus:ring-offset-2 transition text-base group"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-button text-text-white font-semibold shadow-sm hover:bg-button-active hover:text-text-white transition text-base group"
                 tabIndex={0}
             >
-                <Icon name="plus" size={5} className="text-text-accent group-hover:text-text-white group-focus:text-text-white transition" />
+                <Icon name="plus" size={28} className="text-text-white group-hover:text-text-white group-focus:text-text-white transition" />
                 Add More Items
             </Link>
 
             <Button
-                variant="danger"
+                variant="warning"
                 size="lg"
                 onClick={onClearCart}
                 className="inline-flex items-center gap-2 rounded-full"
             >
-                <Icon name="close" size={5} className="text-text-white" />
+                <Icon name="close" size={28} className="text-red-500" />
                 Clear Cart
             </Button>
-
-            <div className="w-full">
-                {checkoutButton}
-            </div>
         </nav>
     );
 }

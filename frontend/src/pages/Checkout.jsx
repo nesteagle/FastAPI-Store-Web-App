@@ -39,7 +39,7 @@ export default function CheckoutPage() {
                     </p>
                     {cart.length === 0 ? (
                         <div className="flex flex-col items-center py-20">
-                            <Icon name="cart" size={16} className="text-text-muted mb-4" />
+                            <Icon name="cart" size={64} className="text-text-muted mb-4" />
                             <div className="text-text-muted text-lg">Your cart is empty.</div>
                         </div>
                     ) : (
@@ -60,13 +60,13 @@ export default function CheckoutPage() {
                             </div>
                             <CartActionsCheckout
                                 onClearCart={handleClearCart}
-                                checkoutButton={null}
                             />
                         </>
                     )}
                 </Card>
 
-                <Card className="rounded-3xl shadow-2xl p-8 flex flex-col gap-8 sticky top-24 self-start">                    <h2 className="text-2xl font-bold text-text-primary">Checkout</h2>
+                <Card className="rounded-3xl shadow-2xl p-8 flex flex-col gap-8 sticky top-24 self-start">
+                    <h2 className="text-2xl font-bold text-text-primary">Checkout</h2>
                     <div>
                         <span className="block text-base font-semibold text-text-primary mb-2">Order Total</span>
                         <span className="text-2xl font-bold text-text-primary">
@@ -108,9 +108,9 @@ export function CheckoutButton() {
             size="xl"
             onClick={handleCheckout}
             disabled={processing}
-            className="w-full rounded-2xl shadow-xl"
+            className="w-full rounded-full shadow-xl"
         >
-            <Icon name="lock" className="text-text-white" />
+            <Icon name="lock" className="text-text-white mr-4" />
             {processing ? "Processing..." : "Secure Checkout"}
         </Button>
     );
