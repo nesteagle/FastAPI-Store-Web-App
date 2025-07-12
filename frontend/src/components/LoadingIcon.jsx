@@ -1,4 +1,4 @@
-export default function LoadingIcon() {
+export default function LoadingIcon({message = "Loading..."}) {
     return (
         <div
             className="flex items-center gap-3 select-none"
@@ -32,7 +32,7 @@ export default function LoadingIcon() {
                 </svg>
             </span>
             <span className="text-base font-medium text-text-muted animate-pulse tracking-wide">
-                Loading...
+                {message}
             </span>
         </div>
     );

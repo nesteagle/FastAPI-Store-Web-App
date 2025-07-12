@@ -17,5 +17,5 @@ export default function useCreationForm(initialState, onSubmit) {
         setFormData(initialState);
     };
 
-    return { formData, handleChange, handleSubmit, setFormData };
+    return { formData, handleChange, handleSubmit };
 }

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useShoppingCart } from "../context/CartContext";
 import ShoppingCart from "./ShoppingCart";
 import Icon from "./Icon";
@@ -6,15 +6,25 @@ import Icon from "./Icon";
 export default function ShoppingCartButton() {
     const { cart } = useShoppingCart();
     const [open, setOpen] = useState(false);
-    const buttonRef = useRef();
+    const buttonRef = useRef(null);
+
+    const handleClick = useCallback(
+        (e) => {
+            if (buttonRef.current && !buttonRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        },
+        [setOpen]
+    );
 
     useEffect(() => {
-        function handleClick(e) {
-            if (buttonRef.current && !buttonRef.current.contains(e.target)) setOpen(false);
+        if (open) {
+            document.addEventListener("mousedown", handleClick);
         }
-        if (open) document.addEventListener("mousedown", handleClick);
-        return () => document.removeEventListener("mousedown", handleClick);
-    }, [open]);
+        return () => {
+            document.removeEventListener("mousedown", handleClick);
+        };
+    }, [open, handleClick]);
 
     const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -32,9 +42,7 @@ export default function ShoppingCartButton() {
                     </span>
                 )}
             </button>
-            {open && (
-                <ShoppingCart onClose={() => setOpen(false)} />
-            )}
+            {open && <ShoppingCart onClose={() => setOpen(false)} />}
         </div>
     );
 }

@@ -1,14 +1,5 @@
 import { apiRequest } from "./baseApi";
 
-export async function getItems(query = null) {
-    const endpoint =
-        query && query.trim() !== ""
-            ? `/items/?search=${encodeURIComponent(query)}`
-            : `/items/`;
-    const response = await apiRequest(endpoint, "GET");
-    return response.items;
-}
-
 export async function getItem(id) {
     const int_id = parseInt(id);
     if (int_id == null || !Number.isInteger(int_id) || int_id <= 0) {

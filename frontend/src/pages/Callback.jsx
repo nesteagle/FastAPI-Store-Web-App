@@ -6,7 +6,7 @@ import { useNotification } from "../context/NotificationContext";
 
 
 export default function Callback() {
-    const { isLoading, isAuthenticated, error, getAccessTokenSilently } = useAuth0();
+    const { isLoading, isAuthenticated, error } = useAuth0();
     const { callApi } = useAuthenticatedApi();
     const { showToast } = useNotification();
     useEffect(() => {
@@ -21,7 +21,7 @@ export default function Callback() {
         if (isAuthenticated && !isLoading) {
             fetchBackendUser();
         }
-    }, [isAuthenticated, isLoading, getAccessTokenSilently]);
+    }, [isAuthenticated, isLoading]);
 
     if (isLoading) return <div>Loading authentication...</div>;
     if (!isAuthenticated) return handleError("Not authenticated");

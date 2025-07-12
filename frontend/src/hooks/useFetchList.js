@@ -1,51 +1,53 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthenticatedApi } from "./useApi";
 
-export default function useFetchList(fetchFunction, dataKey, cacheKey, cacheDuration = 15 * 60 * 1000) {
+export default function useFetchList(fetchFunction, dataKey, cacheKey, cacheDuration = 15 * 60_1000) {
     const { callApi } = useAuthenticatedApi();
     const [data, setData] = useState([]);
     const [isDataLoading, setIsDataLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchData = useCallback(async () => {
-        setIsDataLoading(true);
-        setError(null);
-
-        const now = Date.now();
-
-        if (cacheKey) {
-            const cached = localStorage.getItem(cacheKey);
-            const cacheTime = localStorage.getItem(`${cacheKey}_time`);
-            if (cached && cacheTime && now - Number(cacheTime) < cacheDuration) {
-                setData(JSON.parse(cached));
-                setIsDataLoading(false);
-                return;
-            }
-        }
-
-        try {
-            const response = await callApi(
-                fetchFunction.endpoint,
-                fetchFunction.method,
-                fetchFunction.data
-            );
-            const result = dataKey ? response[dataKey] : response;
-            setData(result);
-
-            if (cacheKey) {
-                localStorage.setItem(cacheKey, JSON.stringify(result));
-                localStorage.setItem(`${cacheKey}_time`, now.toString());
-            }
-        } catch (err) {
-            setError(err);
-        } finally {
-            setIsDataLoading(false);
-        }
-    }, [callApi, fetchFunction, dataKey, cacheKey, cacheDuration]);
-
     useEffect(() => {
+        let cancelled = false;
+        async function fetchData() {
+            setIsDataLoading(true);
+            setError(null);
+
+            const now = Date.now();
+            if (cacheKey) {
+                const cached = localStorage.getItem(cacheKey);
+                const cacheTime = localStorage.getItem(`${cacheKey}_time`);
+                if (cached && cacheTime && now - Number(cacheTime) < cacheDuration) {
+                    if (!cancelled) {
+                        setData(JSON.parse(cached));
+                        setIsDataLoading(false);
+                    }
+                    return;
+                }
+            }
+
+            try {
+                const response = await callApi(fetchFunction.endpoint, fetchFunction.method);
+                const result = dataKey ? response[dataKey] : response;
+                if (!cancelled) {
+                    setData(result);
+                    if (cacheKey) {
+                        localStorage.setItem(cacheKey, JSON.stringify(result));
+                        localStorage.setItem(`${cacheKey}_time`, now.toString());
+                    }
+                }
+            } catch (err) {
+                if (!cancelled) setError(err);
+            } finally {
+                if (!cancelled) setIsDataLoading(false);
+            }
+        }
+
         fetchData();
-    }, [fetchData]);
+        return () => {
+            cancelled = true;
+        };
+    }, [callApi, fetchFunction.endpoint, fetchFunction.method, dataKey, cacheKey, cacheDuration]);
 
     return { data, isDataLoading, error };
 }

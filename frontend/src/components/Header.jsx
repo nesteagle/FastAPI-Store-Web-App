@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthControls } from './AuthControls';
+import { useAuth0 } from "@auth0/auth0-react";
 import ShoppingCartButton from './ShoppingCartButton';
 import Button from './Button';
 import Icon from './Icon';
@@ -8,12 +9,33 @@ import Container from './Container';
 
 export default function StoreHeader() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { isAuthenticated } = useAuth0();
 
-    const links = [
-        { to: "/", text: "Home" },
-        { to: "/catalog", text: "Catalog" },
-        { to: "/account", text: "Orders" }
-    ];
+    function Links({ type = "base" }) {
+        const baseClass = "text-text-primary font-medium";
+        const typeClass = type === "base"
+            ? "sm:text-lg link-underline-transition"
+            : "p-2 rounded hover:bg-bg-tertiary transition";
+        const links = [
+            { to: "/", text: "Home" },
+            { to: "/catalog", text: "Catalog" },
+            ...(isAuthenticated ? [{ to: "/account", text: "Account" }] : [])
+        ];
+        return (
+            <>
+                {links.map(link => (
+                    <Link
+                        key={link.to}
+                        to={link.to}
+                        className={`${baseClass} ${typeClass}`}
+                        {...(type !== "base" && { onClick: () => setMenuOpen(false) })}
+                    >
+                        {link.text}
+                    </Link>
+                ))}
+            </>
+        );
+    }
 
     return (
         <header className="bg-bg-secondary shadow-md border-b border-border-muted sticky top-0 z-20 transition-colors duration-200">
@@ -30,18 +52,14 @@ export default function StoreHeader() {
                 </div>
 
                 <nav className="hidden md:flex gap-6">
-                    {links.map((link) => (
-                        <Link key={link.to} to={link.to} className="text-base sm:text-lg font-medium link-underline-transition">
-                            {link.text}
-                        </Link>
-                    ))}
+                    <Links type="base" />
                 </nav>
 
                 <div className="flex items-center gap-3 sm:gap-4">
                     <ShoppingCartButton />
                     <AuthControls />
                     <Button variant="secondary" size="xs" onClick={() => setMenuOpen((v) => !v)} className="md:hidden">
-                        <Icon name="mobile" className="text-text-primary"/>
+                        <Icon name="mobile" className="text-text-primary" />
                     </Button>
                 </div>
             </Container>
@@ -50,16 +68,7 @@ export default function StoreHeader() {
             {menuOpen && (
                 <div className="md:hidden bg-bg-secondary border-t border-border-muted shadow-lg absolute w-full left-0 top-full z-30 animate-fade-in">
                     <nav className="flex flex-col gap-2 px-4 py-3">
-                        {links.map((link) => (
-                            <Link
-                                key={link.to}
-                                to={link.to}
-                                className="text-text-primary font-medium p-2 rounded hover:bg-bg-tertiary transition"
-                                onClick={() => setMenuOpen(false)}
-                            >
-                                {link.text}
-                            </Link>
-                        ))}
+                        <Links type="mobile" />
                     </nav>
                 </div>
             )}

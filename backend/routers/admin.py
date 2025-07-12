@@ -18,7 +18,6 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 async def get_all_orders(db: Session = Depends(get_db)):
     """Get all orders for admin dashboard."""
     orders = get_orders_admin_service(db)
-    print("admin permission done")
     return {"orders": orders}
 
 

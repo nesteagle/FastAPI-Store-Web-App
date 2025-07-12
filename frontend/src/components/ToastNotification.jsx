@@ -6,8 +6,6 @@ export default function ToastNotification({ message, type = "success", onClose }
         transition
         ${type === "success" ? "bg-success text-text-white" : ""}
         ${type === "error" ? "bg-error text-text-white" : ""}
-        ${type === "info" ? "bg-button text-text-white" : ""}
-        ${type === "warning" ? "bg-warning text-black" : ""}
       `}
       role="alert"
     >

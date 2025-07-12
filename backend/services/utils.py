@@ -15,6 +15,10 @@ from backend.models import User, Item, Order, OrderItem, OrderItemCreate
 
 def encode_item_fields(item: Item) -> Item:
     """Validate and encode item image URL for safe storage."""
+    if item.price < 0:
+        raise HTTPException(400, "Price must be non-negative")
+    if not item.name:
+        raise HTTPException(400, "Name cannot be empty")
     if item.image_src:
         sanitized = item.image_src.strip()
         if not sanitized.lower().startswith(("http://", "https://")):
@@ -80,10 +84,11 @@ def add_order_items(
     db: Session, order_id: int, order_items: List[OrderItemCreate]
 ) -> None:
     """Add validated order items to an existing order."""
-    for item in order_items:
-        if item.quantity <= 0:
-            raise ValueError("Quantity must be a positive integer")
-        db.add(
-            OrderItem(order_id=order_id, item_id=item.item_id, quantity=item.quantity)
-        )
-    db.commit()
+    if any(oi.quantity <= 0 for oi in order_items):
+        raise HTTPException(status_code=400, detail="Quantity must be a positive integer")
+
+    mappings = [
+        {"order_id": order_id, "item_id": oi.item_id, "quantity": oi.quantity}
+        for oi in order_items
+    ]
+    db.bulk_insert_mappings(OrderItem, mappings)

@@ -56,10 +56,10 @@ export default function HomePage() {
                 <Container size="sm" className="text-center">
                     <h3 className="text-2xl font-bold mb-4 text-text-primary">About</h3>
                     <p className="text-lg text-text-muted mb-6">
-                        Hi, I'm Aaron! This production-ready e-commerce platform was an independently designed summer project of mine between first and second year, during my undergraduate degree in Computer Science + Statistics at UBC.
+                        Hi, I'm Aaron! This platform is a summer project I independently designed and built between first and second year, during my undergraduate degree in Computer Science + Statistics at UBC.
                     </p>
-                    <Link to="/about" className="link-primary">
-                        Learn More About Us
+                    <Link to="https://github.com/nesteagle" className="link-primary">
+                        Discover My Work
                     </Link>
                 </Container>
             </section>

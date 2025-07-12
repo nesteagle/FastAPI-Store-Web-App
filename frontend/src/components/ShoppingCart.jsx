@@ -22,7 +22,7 @@ export default function ShoppingCart({ onClose }) {
     }
 
     return (
-        <div className="absolute right-0 mt-2 w-112 max-w-[95vw] bg-bg-secondary rounded-xl shadow-2xl border border-border-muted z-50 p-6 animate-fade-in">
+        <div className="fixed left-1/2 top-8 transform -translate-x-1/2 w-112 max-w-[95vw] bg-bg-secondary rounded-xl shadow-2xl border border-border-muted p-6 mt-14 animate-fade-in sm:absolute sm:right-0 sm:left-auto sm:top-auto sm:transform-none sm:-translate-x-0 sm:mt-8">
             <h2 className="text-xl font-display font-bold text-text-primary mb-4">Shopping Cart</h2>
             {cart.length === 0 ? (
                 <div className="flex flex-col items-center py-8">

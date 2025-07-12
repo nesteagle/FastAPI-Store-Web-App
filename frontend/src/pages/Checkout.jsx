@@ -78,7 +78,7 @@ export default function CheckoutPage() {
                         <span className="text-text-muted text-sm">Secured by Stripe.</span>
                     </div>
                     <div className="text-xs text-text-muted mt-2">
-                        By checking out, you agree to being cool and amazing!
+                        Tip: For this demo, use card number 42424242... and any CVV/future expiry date.
                     </div>
                 </Card>
             </section>
@@ -91,6 +91,7 @@ export function CheckoutButton() {
     const { callApi } = useAuthenticatedApi();
     const { cart } = useShoppingCart();
     const [processing, setProcessing] = useState(false);
+    const isCheckoutDisabled = cart.length === 0 || !isAuthenticated;
 
     const handleCheckout = async () => {
         if (!isAuthenticated) return;
@@ -103,15 +104,25 @@ export function CheckoutButton() {
     };
 
     return (
-        <Button
-            variant="primary"
-            size="xl"
-            onClick={handleCheckout}
-            disabled={processing}
-            className="w-full rounded-full shadow-xl"
-        >
-            <Icon name="lock" className="text-text-white mr-4" />
-            {processing ? "Processing..." : "Secure Checkout"}
-        </Button>
+        <>
+            {isCheckoutDisabled ? (
+                <div className="text-lg text-text-muted mt-2 text-center">
+                    {cart.length === 0 ? "Your cart is empty."
+                        : !isAuthenticated ? "Please log in to checkout" : null}
+                </div>
+            ) : (
+                <Button
+                    variant="primary"
+                    size="xl"
+                    onClick={handleCheckout}
+                    disabled={processing}
+                    className="w-full rounded-full shadow-xl"
+                >
+                    <Icon name="lock" className="text-text-white mr-4" />
+                    {processing ? "Processing..." : "Secure Checkout"}
+                </Button>
+            )}
+        </>
+
     );
 }

@@ -23,7 +23,7 @@ export default function Catalog() {
                 <Container className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
                         <h1 className="text-3xl md:text-4xl font-display font-extrabold text-text-primary mb-2">
-                            {category === "all" ? "All Products" : `${category} Products`}
+                            {`${category} Products`}
                         </h1>
                         <p className="text-text-muted text-lg max-w-2xl">
                             Discover our curated selection of quality items. Browse, filter, and find your next favorite product.

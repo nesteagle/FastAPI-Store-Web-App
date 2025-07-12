@@ -6,6 +6,7 @@ import { useNotification } from "../context/NotificationContext";
 import Main from "../components/Main";
 import Button from "../components/Button";
 import FormField from "../components/FormField";
+import LoadingIcon from "../components/LoadingIcon";
 
 export default function ProductPage() {
     const { id } = useParams();
@@ -31,10 +32,13 @@ export default function ProductPage() {
         fetchItem();
     }, [id]);
 
+
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh]">
-                <span className="text-error text-lg font-semibold mb-4">{error}</span>
+                <span className="text-text-muted text-lg font-semibold mb-4">
+                    An error ocurred when loading this product.
+                </span>
                 <Button variant="secondary" onClick={() => navigate(-1)}>
                     ← Back to Catalog
                 </Button>
@@ -45,11 +49,11 @@ export default function ProductPage() {
     if (!product) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[50vh]">
-                <div className="w-12 h-12 border-4 border-text-muted border-t-transparent rounded-full animate-spin mb-4"></div>
-                <span className="text-text-muted text-lg">Loading product...</span>
+                <LoadingIcon message="Loading product..." />
             </div>
         );
     }
+
 
     const validImageSrc = product.image_src && /^https?:\/\//.test(product.image_src);
 

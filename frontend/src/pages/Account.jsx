@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import useFetchList from "../hooks/useFetchList";
 import Main from "../components/Main";
 import Card from "../components/Card";
@@ -12,6 +13,7 @@ export default function AccountPage() {
     }), []);
     const { data, isDataLoading, error } = useFetchList(fetchFunction, "orders", "orders_cache", 3 * 60 * 1000);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const { isAuthenticated } = useAuth0();
 
     const orders = [...(data || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -26,10 +28,16 @@ export default function AccountPage() {
     if (!orders?.length) {
         return (
             <Main className="py-16">
-                <Card className="max-w-2xl mx-auto px-4 py-5 text-center">
-                    <h1 className="font-display text-2xl mb-2 text-text-primary">No Orders Yet</h1>
-                    <p className="text-text-muted">Your orders will appear here after your first purchase.</p>
-                </Card>
+            <Card className="max-w-2xl mx-auto px-4 py-20 text-center rounded-full">
+                <h1 className="font-sans font-semibold text-3xl mb-2 text-text-primary">
+                {isAuthenticated ? "No Orders Yet" : "Not Signed In"}
+                </h1>
+                <p className="text-text-muted text-lg">
+                {isAuthenticated
+                    ? "Your orders will appear here after your first purchase."
+                    : "Sign in to view your orders."}
+                </p>
+            </Card>
             </Main>
         );
     }
@@ -79,7 +87,7 @@ export default function AccountPage() {
                         </Card>
                     ))}
                 </div>
-                
+
                 {selectedOrder && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
                         <Card className="max-w-lg w-full p-6 relative">

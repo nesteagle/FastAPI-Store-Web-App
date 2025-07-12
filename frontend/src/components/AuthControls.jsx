@@ -23,7 +23,7 @@ export function LoginButton() {
 
     return (
         <Button variant="primary" onClick={() => loginWithRedirect()}>
-            Log In
+            Sign In
         </Button>
     );
 }
@@ -40,27 +40,6 @@ export function LogoutButton() {
             className="w-full">
             Log Out
         </Button>
-    );
-}
-
-export function Profile() {
-    const { user, isAuthenticated, isLoading } = useAuth0();
-
-    if (isLoading) {
-        return <LoadingIcon />;
-    }
-
-    return (
-        isAuthenticated && (
-            <div className="flex items-center gap-3 px-2">
-                <img
-                    src={user.picture}
-                    alt={user.name}
-                    className="rounded-full border border-border-muted shadow-sm"
-                />
-                <span className="hidden sm:inline text-sm text-text-muted font-medium truncate max-w-[120px]">{user.email}</span>
-            </div>
-        )
     );
 }
 
