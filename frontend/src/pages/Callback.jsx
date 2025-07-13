@@ -3,12 +3,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Navigate } from "react-router-dom";
 import { useAuthenticatedApi } from "../hooks/useApi";
 import { useNotification } from "../context/NotificationContext";
+import { useShoppingCart } from "../context/CartContext";
 
 
 export default function Callback() {
     const { isLoading, isAuthenticated, error } = useAuth0();
     const { callApi } = useAuthenticatedApi();
     const { showToast } = useNotification();
+    const { clearCart } = useShoppingCart();
     useEffect(() => {
         const fetchBackendUser = async () => {
             try {
@@ -32,7 +34,7 @@ export default function Callback() {
         return <div>{message}</div>
     }
 
-    localStorage.clear();
+    clearCart();
 
     return (
         <Navigate to="/" replace />

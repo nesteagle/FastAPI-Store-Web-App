@@ -6,7 +6,6 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app/backend
-      - fastapi_db:/app/backend/db
     environment:
       - PYTHONUNBUFFERED=1
     working_dir: /app
@@ -23,15 +22,5 @@ services:
     working_dir: /app
     command: npm run dev -- --host 0.0.0.0
 
-  stripe-cli:
-    image: stripe/stripe-cli:latest
-    command: listen --forward-to http://host.docker.internal:8000/webhook/
-    env_file:
-      - .env.stripe-cli
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    tty: true
-
 volumes:
   frontend_node_modules:
-  fastapi_db:

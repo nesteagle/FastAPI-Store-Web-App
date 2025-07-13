@@ -15,7 +15,7 @@ from backend.models import User, Item, Order, OrderItem, OrderItemCreate
 
 def encode_item_fields(item: Item) -> Item:
     """Validate and encode item image URL for safe storage."""
-    if item.price < 0:
+    if float(item.price) < 0:
         raise HTTPException(400, "Price must be non-negative")
     if not item.name:
         raise HTTPException(400, "Name cannot be empty")
