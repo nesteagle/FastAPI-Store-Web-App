@@ -24,6 +24,8 @@ export default function Callback() {
             fetchBackendUser();
         }
     }, [isAuthenticated, isLoading]);
+    
+    clearCart();
 
     if (isLoading) return <div>Loading authentication...</div>;
     if (!isAuthenticated) return handleError("Not authenticated");
@@ -33,8 +35,6 @@ export default function Callback() {
         showToast(message, "error");
         return <div>{message}</div>
     }
-
-    clearCart();
 
     return (
         <Navigate to="/" replace />

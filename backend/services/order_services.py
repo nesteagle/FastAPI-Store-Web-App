@@ -38,20 +38,20 @@ def create_order_service(order_data: OrderCreate, db: Session) -> Dict[str, Any]
     """Create a new order with associated items."""
     try_get_user(order_data.user_id, db)
     try:
-        with db.begin():
-            new_order = Order(
-                user_id=order_data.user_id,
-                stripe_id=order_data.stripe_id,
-                currency=order_data.currency,
-                amount=order_data.amount,
-                email=order_data.email,
-            )
-            db.add(new_order)
-            db.flush()
-            add_order_items(db, new_order.id, order_data.items)
+        new_order = Order(
+            user_id=order_data.user_id,
+            stripe_id=order_data.stripe_id,
+            currency=order_data.currency,
+            amount=order_data.amount,
+            email=order_data.email,
+        )
+        db.add(new_order)
+        db.flush()
+        add_order_items(db, new_order.id, order_data.items)
+        db.commit()
     except IntegrityError as exc:
         raise HTTPException(400, "Item(s) do not exist") from exc
-    
+
     db.refresh(new_order)
     return get_order_details(new_order)
 
@@ -62,14 +62,14 @@ def update_order_service(
     """Update an existing order and replace its items."""
     existing_order = try_get_order(order_id, db)
     try_get_user(order_data.user_id, db)
-    with db.begin():
-        existing_order.user_id = order_data.user_id
-        existing_order.stripe_id = order_data.stripe_id
-        existing_order.currency = order_data.currency
-        existing_order.amount = order_data.amount
-        existing_order.email = order_data.email
-        db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))
-        add_order_items(db, order_id, order_data.items)
+    existing_order.user_id = order_data.user_id
+    existing_order.stripe_id = order_data.stripe_id
+    existing_order.currency = order_data.currency
+    existing_order.amount = order_data.amount
+    existing_order.email = order_data.email
+    db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))
+    add_order_items(db, order_id, order_data.items)
+    db.commit()
     db.refresh(existing_order, attribute_names=["order_items"])
     return get_order_details(existing_order)
 
@@ -77,9 +77,9 @@ def update_order_service(
 def delete_order_service(order_id: int, db: Session) -> None:
     """Delete an order and all associated order items."""
     order = try_get_order(order_id, db)
-    with db.begin():
-        db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))
-        db.delete(order)
+    db.exec(delete(OrderItem).where(OrderItem.order_id == order_id))
+    db.commit()
+    db.delete(order)
 
 
 def get_orders_admin_service(db: Session) -> List[Dict[str, Any]]:

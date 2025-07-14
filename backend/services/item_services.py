@@ -23,28 +23,28 @@ def get_item_service(item_id: int, db: Session):
 
 def create_item_service(item: Item, db: Session):
     """Create a new item with field validation."""
-    with db.begin():
-        item = encode_item_fields(item)
-        db.add(item)
+    item = encode_item_fields(item)
+    db.add(item)
+    db.commit()
     db.refresh(item)
     return item
 
 
 def update_item_service(item_id: int, new_item: Item, db: Session):
     """Update an existing item with new data."""
-    with db.begin():
-        existing = try_get_item(item_id, db)
-        existing.name = new_item.name
-        existing.description = new_item.description
-        existing.price = new_item.price
-        existing.image_src = new_item.image_src
+    existing = try_get_item(item_id, db)
+    existing.name = new_item.name
+    existing.description = new_item.description
+    existing.price = new_item.price
+    existing.image_src = new_item.image_src
+    db.commit()
     db.refresh(existing)
     return existing
 
 
 def delete_item_service(item_id: int, db: Session):
     """Delete an item from the database."""
-    with db.begin():
-        existing = try_get_item(item_id, db)
-        db.delete(existing)
+    existing = try_get_item(item_id, db)
+    db.delete(existing)
+    db.commit()
     return item_id

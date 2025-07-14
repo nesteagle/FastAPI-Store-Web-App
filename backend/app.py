@@ -20,12 +20,13 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import stripe
-from .database import create_db_and_tables, get_db_session
+from .database import create_db_and_tables, get_db, get_db_session
 from .routers import items, users, orders, admin
 from .models import OrderItemCreate, User, OrderCreate
 from .auth import get_current_user
 from .services.order_services import create_order_service
 from .services.item_services import get_item_service
+from sqlmodel import Session
 
 load_dotenv()
 
@@ -49,9 +50,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [
-    "https://frontend-app.graydune-f392eb79.westus2.azurecontainerapps.io"
-]
+origins = ["https://frontend-app.graydune-f392eb79.westus2.azurecontainerapps.io"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -88,16 +87,16 @@ async def auth_callback():
 
 @app.post("/create-checkout-session/")
 async def create_checkout_session(
-    request: Request, current_user: User = Depends(get_current_user)
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     """Create Stripe checkout session from user's cart."""
     cart_items = await request.json()
     item_id_to_qty = {item["id"]: item["qty"] for item in json.loads(cart_items)}
     item_ids = list(item_id_to_qty.keys())
 
-    items = [
-        get_item_service(item_id=item_id, db=get_db_session()) for item_id in item_ids
-    ]
+    items = [get_item_service(item_id=item_id, db=db) for item_id in item_ids]
 
     if len(items) != len(item_ids):
         raise HTTPException(
@@ -141,6 +140,7 @@ async def create_checkout_session(
 async def stripe_webhook(
     request: Request,
     stripe_signature: str = Header(None),
+    db: Session = Depends(get_db),
 ):
     """Process Stripe webhook events and create orders."""
     payload = await request.body()
@@ -172,7 +172,7 @@ async def stripe_webhook(
             email=session["customer_email"],
         )
         try:
-            create_order_service(order_data=order_data, db=get_db_session())
+            create_order_service(order_data=order_data, db=db)
         except Exception as exc:
             raise HTTPException(
                 status_code=500, detail="Order DB error: " + str(exc)
