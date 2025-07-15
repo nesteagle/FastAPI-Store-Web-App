@@ -11,7 +11,7 @@
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-**A full-stack e-commerce platform showcasing modern web development skills, learned and built from scratch in weeks during my first-year summer.**
+**A modern full-stack e-commerce platform built with FastAPI, React, and Azure.**
 
 </div>
 
@@ -20,14 +20,14 @@
 ## 📋 Table of Contents
 
 - [Key Features](#-key-features)
-- [Project Overview](#project-overview)
-- [Technology Stack](#technology-stack)
+- [Project Overview](#-project-overview)
+- [Live Demo](#-live-demo)
+- [Technology Stack](#-technology-stack)
 - [Technical Achievements](#-technical-achievements)
 - [Project Scope & Impact](#-project-scope--impact)
-- [Learning Journey](#learning-journey)
-- [Live Demo](#live-demo)
-- [User Guide](#user-guide)
-- [Admin Tools Overview](#admin-tools-overview)
+- [Learning Journey](#-learning-journey)
+- [Frontend Highlights](#-frontend-highlights)
+- [Admin Tools Overview](#-admin-tools-overview)
 
 ## ✨ Key Features
 - 🔐 Secure Auth0 user and endpoint authentication
@@ -38,7 +38,7 @@
 
 ## 📖 Project Overview
 
-This was my summer project between first and second year at UBC Computer Science + Statistics. Over a few weeks (mid-June - July 13), I independently learned the technologies from scratch and fully implemented this application. Finally, I containerized my application using Docker, and used modern workflows to host my website on Azure Cloud infrastructure.
+This was my summer project between first and second year at UBC Computer Science. Over 4 weeks (June 19 - July 13), I independently learned the skills from scratch, fully implemented this application, and deployed using Azure Cloud infrastructure.
 
 ## 🌐 Live Demo
 
@@ -63,7 +63,7 @@ CVC: Any 3 digits (e.g., 123)
 - **SQLModel** - Type-safe ORM with Pydantic integration
 - **Stripe API** - Payment ecosystem with webhooks - can be switched to other payment gateways
 - **Azure SQL Database** - Secure, cloud-hosted database 
-- **Unit Testing** - Unit testing with pytest for service layer
+- **Unit Testing** - Unit testing with Pytest for service layer
 
 ### **Frontend**
 - **React** - Modern hooks and context patterns
@@ -82,8 +82,8 @@ CVC: Any 3 digits (e.g., 123)
 ## 🏗️ Technical Achievements
 
 **Complex Systems Integration**
-- Built a complete order fulfillment pipeline from cart → payment → database
-- Implemented real-time Stripe webhook processing with transaction consistency
+- Built a complete order fulfillment pipeline from cart → checkout → payment → database
+- Implemented real-time Stripe webhook processing with DB transaction consistency
 - Created type-safe API contracts shared between frontend and backend
 
 **Production-Ready Architecture**
@@ -113,23 +113,20 @@ CVC: Any 3 digits (e.g., 123)
 - Production-ready Azure deployment with containerized microservices
 
 **Development Achievement**
-- **4-week intensive development** from first commit - June 19 - to release - July 13
-- **Complete ownership** of architecture, implementation, testing, and deployment
+- **4-week intensive development** from first commit (June 19) to release (July 13)
+- **Complete ownership** of architecture, design, implementation, testing, and deployment
 - **Modern tech stack** following industry best practices for security and scalability
 
 ## 🎓 Learning Journey
-This project represents my deep dive into modern web development during summer break. In just a few weeks, I went from reading Python books to deploying a production application on Azure, learning each technology through building real, usable features.
+This project represents my deep dive into modern web development during my first-year summer break. I started learning FastAPI in mid-June, with my first commit June 19, and deployed by July 13.
 
 **What challenged me most:** 
 - I accidentally implemented JWT decoding from scratch before discovering auth0-fastapi
 - Deployment to Azure and learning modern deployment pipelines
 - Ensuring webhook reliability and transaction consistency between Stripe and my database after deployment
 
-## 📱 User Guide
+## 💡 Frontend Highlights
 
-On arrival, user lands on Home Page. Browse featured products from the home page.
-
-### Check out these features:
 - **Home Page** - Browse featured products here.
 
 - **Catalog** - View all products and search by keyword.
@@ -164,7 +161,7 @@ On arrival, user lands on Home Page. Browse featured products from the home page
 
 
 ## 👑 Admin Tools Overview
-- **View and Manage Items** – View and perform CRUD operations on the items in the store.
+- **View and Manage Items** – CRUD operations on store inventory.
 - **View Users** – View non-sensitive user data: email, database ID, Auth0 ID.
 - **View Orders** – View all order contents and timestamps.
 <div align="center">
@@ -177,4 +174,8 @@ On arrival, user lands on Home Page. Browse featured products from the home page
 
 ---
 
-*If you liked this project, give it a star!*
+<div align="center">
+
+*⭐ If you liked this project, give it a star!*
+
+</div>
