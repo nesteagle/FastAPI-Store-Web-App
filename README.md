@@ -23,7 +23,7 @@
 - [Project Overview](#-project-overview)
 - [Live Demo](#-live-demo)
 - [Technology Stack](#-technology-stack)
-- [Technical Achievements](#-technical-achievements)
+- [Technical Achievements](#technical-achievements)
 - [Project Scope & Impact](#-project-scope--impact)
 - [Learning Journey](#-learning-journey)
 - [Frontend Highlights](#-frontend-highlights)
@@ -79,7 +79,7 @@ CVC: Any 3 digits (e.g., 123)
 - **Auth0** - RBAC and OAuth flows
 
 
-## 🏗️ Technical Achievements
+## Technical Achievements
 
 **Complex Systems Integration**
 - Built a complete order fulfillment pipeline from cart → checkout → payment → database
