@@ -17,32 +17,32 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Key Features](#-key-features)
-- [Project Overview](#-project-overview)
+- [Key Features](#key-features)
+- [Project Overview](#project-overview)
 - [Live Demo](#-live-demo)
-- [Technology Stack](#-technology-stack)
-- [Technical Achievements](#-technical-achievements)
-- [Project Scope & Impact](#-project-scope--impact)
-- [Learning Journey](#-learning-journey)
-- [Frontend Highlights](#-frontend-highlights)
-- [Admin Tools Overview](#-admin-tools-overview)
+- [Technology Stack](#technology-stack)
+- [Technical Achievements](#technical-achievements)
+- [Project Scope & Impact](#project-scope--impact)
+- [Learning Journey](#learning-journey)
+- [Frontend Highlights](#frontend-highlights)
+- [Admin Tools Overview](#admin-tools-overview)
 
-## ✨ Key Features
-- 🔐 Secure Auth0 user and endpoint authentication
-- 💳 Complete payment integration with webhooks
-- 🎨 Mobile-first Tailwind CSS theming with custom @theme integration and dark mode
-- ☁️ Containerized Azure deployment with multi-service architecture
-- 🛢️ Complete DB integration using Azure SQL + SQLModel, with optimized queries and transaction consistency
+## Key Features
+- Secure Auth0 user and endpoint authentication
+- Complete payment integration with webhooks
+- Mobile-first Tailwind CSS theming with custom @theme and dark mode
+- Containerized Azure deployment with multi-service architecture
+- Complete DB integration using Azure SQL + SQLModel, with optimized queries and transaction consistency
 
-## 📖 Project Overview
+## Project Overview
 
-This was my summer project between first and second year at UBC Computer Science. Over 4 weeks (June 19 - July 13), I independently learned the skills from scratch, fully implemented this application, and deployed using Azure Cloud infrastructure.
+This was my summer project between first and second year at UBC Computer Science. Over 4 weeks (June 19 - July 13), I independently learned, implemented, and deployed this application.
 
 ## 🌐 Live Demo
 
-> **Try it now:** Explore all the features here!
+> **Try it now:** Explore all the features here! Containers may take some time to cold-start.
 
 [Visit Live Application](https://frontend-app.graydune-f392eb79.westus2.azurecontainerapps.io)
 
@@ -55,7 +55,7 @@ CVC: Any 3 digits (e.g., 123)
 
 *Note: Each Azure container may take 30 seconds to wake up, this keeps hosting costs minimal for a demo project like this.*
 
-## ⚡ Technology Stack
+## Technology Stack
 
 ### **Backend**
 - **FastAPI** - Modern async framework with automatic OpenAPI documentation
@@ -63,48 +63,48 @@ CVC: Any 3 digits (e.g., 123)
 - **SQLModel** - Type-safe ORM with Pydantic integration
 - **Stripe API** - Payment ecosystem with webhooks - can be switched to other payment gateways
 - **Azure SQL Database** - Secure, cloud-hosted database 
-- **Unit Testing** - Unit testing with Pytest for service layer
+- **Unit Testing** - Unit testing with pytest for service layer
 
 ### **Frontend**
 - **React** - Modern hooks and context patterns
-- **Tailwind CSS** - Custom theming with @theme integration
+- **Tailwind CSS** - Custom theming (with @theme integration)
 - **Auth0 React SDK** - Authentication integration with token management
 - **Vite** - Build tooling for development
 
 ### **DevOps & Production**
 - **Docker** - Multi-container orchestration
-- **Azure CLI** - Streamlined setup and config for cloud infrastructure
+- **Azure CLI** - Streamlined setup and config for deployment
 - **RESTful API Design** - Documented endpoints following OpenAPI specifications
 - **Environment Management** - Secure configuration handling
 - **Auth0** - RBAC and OAuth flows
 
 
-## 🚀 Technical Achievements
+## Technical Achievements
 
-**Complex Systems Integration**
+**Systems Integration**
 - Built a complete order fulfillment pipeline from cart → checkout → payment → database
-- Implemented real-time Stripe webhook processing with DB transaction consistency
+- Implemented real-time Stripe webhook processing with DB transactions
 - Created type-safe API contracts shared between frontend and backend
 
-**Production-Ready Architecture**
+**Architecture**
 - Service layer pattern with dependency injection for testability
 - Async FastAPI handling concurrent payment processing
 - Complete RBAC implementation with role-based UI rendering and API access control
 - Multi-service architecture with containerized microservices and horizontal scaling
 
 **Modern Development Practices**
-- End-to-end type safety from database models to React components
+- End-to-end type safety throughout backend + database models
 - Comprehensive error handling with user-friendly messages
-- Container-first development with Docker multi-stage builds
-- Complex cloud-native development and Azure deployment pipeline
+- Container-first development with Docker multi-container builds
+- Cloud-native development and Azure deployment pipeline
 
 **Performance & Security**
 - Optimized database queries with SQLModel relationships and eager loading
 - JWT-based authentication with automatic token refresh
-- PCI-compliant payment handling through Stripe integration
+- Payment handling through Stripe
 - Automatic RBAC on user signup and API endpoint protection
 
-## 📊 Project Scope & Impact
+## Project Scope & Impact
 
 **Full-Stack E-commerce Platform**
 - Complete user management system with role-based permissions
@@ -117,7 +117,7 @@ CVC: Any 3 digits (e.g., 123)
 - **Complete ownership** of architecture, design, implementation, testing, and deployment
 - **Modern tech stack** following industry best practices for security and scalability
 
-## 🎓 Learning Journey
+## Learning Journey
 This project represents my deep dive into modern web development during my first-year summer break. I started learning FastAPI in mid-June, with my first commit June 19, and deployed by July 13.
 
 **What challenged me most:** 
@@ -125,7 +125,7 @@ This project represents my deep dive into modern web development during my first
 - Deployment to Azure and learning modern deployment pipelines
 - Ensuring webhook reliability and transaction consistency between Stripe and my database after deployment
 
-## 💡 Frontend Highlights
+## Frontend Highlights
 
 - **Home Page** - Browse featured products here.
 
@@ -160,7 +160,7 @@ This project represents my deep dive into modern web development during my first
 <p align="center"><em>Order history page. I went on a wild shopping spree!</em></p>
 
 
-## 👑 Admin Tools Overview
+## Admin Tools Overview
 - **View and Manage Items** – CRUD operations on store inventory.
 - **View Users** – View non-sensitive user data: email, database ID, Auth0 ID.
 - **View Orders** – View all order contents and timestamps.
