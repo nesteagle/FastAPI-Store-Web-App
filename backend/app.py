@@ -50,7 +50,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = ["https://frontend-app.graydune-f392eb79.westus2.azurecontainerapps.io"]
+origins = ["https://frontend-app.graydune-f392eb79.westus2.azurecontainerapps.io","https://nesteagle.gingerstudio.com/"]
 
 app.add_middleware(
     CORSMiddleware,

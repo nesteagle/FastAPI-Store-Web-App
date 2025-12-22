@@ -1,9 +1,12 @@
 __pycache__/
+tests/
+.pytest_cache/
+.mypy_cache/
 *.pyc
 *.pyo
 *.pyd
 .env
-.venv
+.venv/
 .git
 .gitignore
 Dockerfile
