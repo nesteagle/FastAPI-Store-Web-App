@@ -1,11 +1,10 @@
+import ThemeSlider from "./ThemeSlider";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useShoppingCart } from "../context/CartContext";
-import ShoppingCart from "./ShoppingCart";
 import Icon from "./Icon";
+import Menu from "./Menu";
 import Button from "./Button";
 
-export default function ShoppingCartButton() {
-    const { cart } = useShoppingCart();
+export function SettingsButton() {
     const [open, setOpen] = useState(false);
     const buttonRef = useRef(null);
 
@@ -27,24 +26,26 @@ export default function ShoppingCartButton() {
         };
     }, [open, handleClick]);
 
-    const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
     return (
         <div className="relative" ref={buttonRef}>
             <Button
                 variant="header"
                 size="header"
                 onClick={() => setOpen((v) => !v)}
-                aria-label="Open shopping cart"
+                aria-label="Open settings"
             >
-                <Icon name="cart" className="text-text-accent" />
-                {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-error text-text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
-                        {itemCount}
-                    </span>
-                )}
+                <Icon name="settings" className="text-text-accent" />
             </Button>
-            {open && <ShoppingCart onClose={() => setOpen(false)} />}
+            {open && (
+                <Menu className="w-64 max-w-[85vw]">
+                    <div className="flex flex-col w-full space-y-1">
+                        <div className="flex items-center justify-between px-1 py-1">
+                            <span className="text-text-primary font-medium">Dark Mode</span>
+                            <ThemeSlider />
+                        </div>
+                    </div>
+                </Menu>
+            )}
         </div>
     );
 }

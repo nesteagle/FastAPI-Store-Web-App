@@ -6,6 +6,7 @@ import PlusIcon from '../assets/plus.svg?react';
 import CheckIcon from '../assets/check.svg?react';
 import MenuIcon from '../assets/menu.svg?react';
 import ErrorIcon from '../assets/error.svg?react';
+import SettingsIcon from '../assets/setting.svg?react';
 
 const icons = {
     cart: CartIcon,
@@ -15,7 +16,8 @@ const icons = {
     plus: PlusIcon,
     check: CheckIcon,
     mobile: MenuIcon,
-    error: ErrorIcon
+    error: ErrorIcon,
+    settings: SettingsIcon
 };
 
 export default function Icon({ name, size = 24, className = "", ...props }) {

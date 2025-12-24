@@ -18,14 +18,14 @@ export default function HomePage() {
         <Main>
             <section className="w-full bg-gradient-to-r from-accent/10 via-bg to-accent/10 py-20">
                 <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
-                    <div className="flex-1">
+                    <div className="flex-1 flex flex-col justify-center sm:block">
                         <h1 className="text-4xl md:text-5xl font-display font-extrabold mb-4 text-text-primary">
                             Discover Quality. Shop with Confidence.
                         </h1>
                         <p className="text-lg text-text-muted mb-8 max-w-xl">
                             Carefully selected products, effortless browsing, and secure checkout, all made simple.
                         </p>
-                        <Link to="/catalog" className="btn-primary btn-transition">
+                        <Link to="/catalog" className="btn-primary btn-transition sm:text-left text-center">
                             Shop Bestsellers
                         </Link>
                     </div>

@@ -5,6 +5,7 @@ import CartItemList from "./CartItemList";
 import { CartActionsPopup } from "./CartActions";
 import Button from "./Button";
 import Icon from "./Icon";
+import Menu from "./Menu";
 
 export default function ShoppingCart({ onClose }) {
     const { cart, changeCartItem, removeFromCart, clearCart } = useShoppingCart();
@@ -22,8 +23,8 @@ export default function ShoppingCart({ onClose }) {
     }
 
     return (
-        <div className="fixed left-1/2 top-8 transform -translate-x-1/2 w-112 max-w-[95vw] bg-bg-secondary rounded-xl shadow-2xl border border-border-muted p-6 mt-14 animate-fade-in sm:absolute sm:right-0 sm:left-auto sm:top-auto sm:transform-none sm:-translate-x-0 sm:mt-8">
-            <h2 className="text-xl font-display font-bold text-text-primary mb-4">Shopping Cart</h2>
+        <Menu className="w-112 max-w-[85vw]">
+            <h2 className="text-2xl font-sans font-semibold text-text-primary mb-2 mt-2 ml-2">Shopping Cart</h2>
             {cart.length === 0 ? (
                 <div className="flex flex-col items-center py-8">
                     <Icon name="cart" size={48} className="text-text-muted mb-4" />
@@ -41,6 +42,6 @@ export default function ShoppingCart({ onClose }) {
                     />
                 </>
             )}
-        </div>
+        </Menu>
     );
 }

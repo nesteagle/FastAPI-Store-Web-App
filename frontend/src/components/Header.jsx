@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthControls } from './AuthControls';
 import { useAuth0 } from "@auth0/auth0-react";
@@ -6,10 +6,31 @@ import ShoppingCartButton from './ShoppingCartButton';
 import Button from './Button';
 import Icon from './Icon';
 import Container from './Container';
+import { SettingsButton } from './SettingsButton';
 
 export default function StoreHeader() {
-    const [menuOpen, setMenuOpen] = useState(false);
     const { isAuthenticated } = useAuth0();
+    const [open, setOpen] = useState(false);
+    const buttonRef = useRef(null);
+
+    const handleClick = useCallback(
+        (e) => {
+            if (buttonRef.current && !buttonRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        },
+        [setOpen]
+    );
+
+    useEffect(() => {
+        if (open) {
+            document.addEventListener("mousedown", handleClick);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClick);
+        };
+    }, [open, handleClick]);
+
 
     function Links({ type = "base" }) {
         const baseClass = "text-text-primary font-medium";
@@ -45,7 +66,7 @@ export default function StoreHeader() {
                         <span className="inline-block bg-button/10 rounded-full p-2 mr-2">
                             <Icon name="check" size={36} className="text-text-accent hover:scale-icon-small transition-transform" />
                         </span>
-                        <span className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-text-primary group-hover:text-text-accent transition-colors">
+                        <span className="font-display text-base sm:text-2xl font-extrabold tracking-tight text-text-primary group-hover:text-text-accent transition-colors">
                             nesteagle's store
                         </span>
                     </Link>
@@ -55,18 +76,19 @@ export default function StoreHeader() {
                     <Links type="base" />
                 </nav>
 
-                <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-1 sm:gap-3">
                     <ShoppingCartButton />
+                    <SettingsButton />
                     <AuthControls />
-                    <Button variant="secondary" size="xs" onClick={() => setMenuOpen((v) => !v)} className="md:hidden">
+                    <Button variant="secondary" size="xs" onClick={() => setOpen((v) => !v)} className="md:hidden">
                         <Icon name="mobile" className="text-text-primary" />
                     </Button>
                 </div>
             </Container>
 
             {/* Mobile Menu */}
-            {menuOpen && (
-                <div className="md:hidden bg-bg-secondary border-t border-border-muted shadow-lg absolute w-full left-0 top-full z-30 animate-fade-in">
+            {open && (
+                <div className="md:hidden bg-bg-secondary border-t border-border-muted shadow-lg absolute w-full left-0 top-full z-30 animate-fade-in" ref={buttonRef}>
                     <nav className="flex flex-col gap-2 px-4 py-3">
                         <Links type="mobile" />
                     </nav>
