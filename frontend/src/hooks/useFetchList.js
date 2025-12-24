@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuthenticatedApi } from "./useApi";
 
-export default function useFetchList(fetchFunction, dataKey, cacheKey, cacheDuration = 15 * 60_1000) {
+export default function useFetchList(fetchFunction, dataKey, cacheKey, cacheDuration = 30 * 1000) {
     const { callApi } = useAuthenticatedApi();
     const [data, setData] = useState([]);
     const [isDataLoading, setIsDataLoading] = useState(true);

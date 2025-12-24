@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import ItemCreationForm from "../components/ItemCreationForm";
 import useFetchList from "../../hooks/useFetchList";
-import ObjectViewTable from "../components/ObjectViewTable";
 import LoadingIcon from "../../components/LoadingIcon";
 import { AdminLinkNavigation } from "../components/AdminLinkNavigation";
 import AdminItemsList from "../components/AdminItemsList";
@@ -23,7 +22,7 @@ export default function Items() {
         endpoint: "/items/",
         method: "GET"
     }), []);
-    const { data, isDataLoading } = useFetchList(fetchFunction, "items", "items_cache", 10 * 1000);
+    const { data, isDataLoading } = useFetchList(fetchFunction, "items", "items_cache");
     if (isDataLoading) return <LoadingIcon />
     return (
         <Main>
