@@ -8,7 +8,7 @@ export default function CartItemList({
     variant = "popup", // "popup" or "checkout"
 }) {
     return (
-        <ul className={`divide-y divide-border-muted mb-4 ${variant === "checkout" ? "max-h-full" : "max-h-64 overflow-y-auto"}`}>
+        <ul className={`divide-y divide-border-muted mb-4 ${variant === "checkout" ? "max-h-full" : "ml-2 max-h-64 overflow-y-auto"}`}>
             {cart.map((item) => (
                 <li key={item.id} className={`flex items-center justify-between py-3 ${variant === "checkout" ? "py-6" : ""}`}>
                     <div className="flex items-center gap-3">
